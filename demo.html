@@ -16,9 +16,13 @@
             circle.attr({'fill': 'red'});
 
 
-            circle.animate({'path': raphael.rectpath(100, 100, 100, 50)}, 1000);
             rectangle_path = raphael.rectpath(100, 100, 100, 50);
             rectangle = raphael.path(rectangle_path);
 
+            x = function() { circle.animate({'path': raphael.rectpath(100, 100, 100, 50)}, 1000); 
+                             setTimeout(function() { circle.animate({'path': raphael.circlepath(100, 100, 10)}, 1000); setTimeout(x, 2000); }, 2000);
+            };
+
+            setTimeout(x, 1000);
         </script>
 </html>
