@@ -1,0 +1,3 @@
+[submodule "3rdparty/g.raphael"]
+	path = 3rdparty/g.raphael
+	url = https://github.com/DmitryBaranovskiy/g.raphael.git
