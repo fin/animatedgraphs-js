@@ -1,4 +1,60 @@
-Raphael.prototype.piechart = function(x, y, rad, ang1, ang2, steps) {
+Raphael.prototype.circlepath = function(x, y, r, steps) {
+    // start at top center
+
+    if(steps===undefined)
+        steps=1024;
+
+    var start_x = parseInt(x-r);
+    var start_y = parseInt(y);
+
+    var path = [];
+    path.push('M'+x+' '+(y+r));
+
+    var circ = 2*Math.PI;
+
+    inc = circ/steps;
+
+    for(var i=0;i<circ;i+=inc) {
+        path.push('L'+(x+Math.sin(i)*r));
+        path.push(' '+(y+Math.cos(i)*r));
+    }
+    path.push('Z');
+
+    return path.join('');
+};
+
+Raphael.prototype.rectpath = function(x,y,a,b,steps) {
+    var path = [];
+    if(steps==undefined)
+        steps=1024;
+
+    var altogether = 2*a+2*b;
+    var inc = altogether/steps;
+
+    var start_x = x-a/2;
+    var start_y = y-b/2;
+
+    path.push('M'+(start_x+a/2)+' '+(start_y+b));
+    
+    for(var i=a/2;i<a;i+=inc) {
+        path.push('L'+(start_x+i)+' '+(start_y+b));
+    }
+    for(var i=b;i>0;i-=inc) {
+        path.push('L'+(start_x+a)+' '+(start_y+i));
+    }
+    for(var i=a;i>0;i-=inc) {
+        path.push('L'+(start_x+i)+' '+start_y);
+    }
+    for(var i=b;i>0;i-=inc) {
+        path.push('L'+(start_x)+' '+(start_y+b-i));
+    }
+    for(var i=0;i<a/2;i+=inc) {
+        path.push('L'+(start_x+i)+' '+(start_y+b));
+    }
+    path.push('Z');
+    return path.join('');
+}
+Raphael.prototype.sectionpath = function(x, y, rad, ang1, ang2, steps) {
     // start at tip (x,y), go to angle1 (0° = east), go ccw to angle2 and back to tip
 
     if(steps===undefined)
@@ -46,7 +102,7 @@ Raphael.prototype.piechart = function(x, y, rad, ang1, ang2, steps) {
     return path.join('');
 };
 
-Raphael.prototype.ringchart = function(x, y, rad1, rad2, ang1, ang2, steps) {
+Raphael.prototype.ringsectionpath = function(x, y, rad1, rad2, ang1, ang2, steps) {
     /* draw an arc segment with given inner radius rad1 and outer radius rad2.
        start in the middle of the inner arc, go to angle1 (0° = east), 
        go to the outer arc, go ccw to angle2 and back to the inner arc. */
@@ -59,6 +115,11 @@ Raphael.prototype.ringchart = function(x, y, rad1, rad2, ang1, ang2, steps) {
     
     //create variables
     var steps1 = Math.floor(parseInt(steps)/4); //steps for straight lines and inner arc
+
+    var steps_inner = Math.floor((rad1 / rad2) * steps1);
+    var steps_outer = steps - 2*steps1 - steps_inner;
+
+
     var steps2 = steps1 + parseInt(steps) % 4;  //steps for outer arc
     var angdiff = ang2 - ang1;
     var angdiff2 = angdiff/2;
@@ -82,7 +143,7 @@ Raphael.prototype.ringchart = function(x, y, rad1, rad2, ang1, ang2, steps) {
     path.push('M'+pihx+' '+pihy); //starting point
 
     //path part 1: starting point to inner arc end point
-    steps1f = Math.floor(steps1/2);
+    steps1f = Math.floor(steps_inner/2);
     var tang = (angdiff2)/steps1f;
     for(var i=1; i<=steps1f; i+=1) {
         path.push('L'+(x+rad1*Math.cos(ang1+angdiff2-i*tang)));
@@ -97,8 +158,8 @@ Raphael.prototype.ringchart = function(x, y, rad1, rad2, ang1, ang2, steps) {
     }
     
     //path part 3: outer arc
-    var tang = angdiff/steps2;
-    for(var i=1; i<=steps2; i+=1) {
+    var tang = angdiff/steps_outer;
+    for(var i=1; i<=steps_outer; i+=1) {
         path.push('L'+(x+rad2*Math.cos(ang1+i*tang)));
         path.push(' '+(y-rad2*Math.sin(ang1+i*tang)));
     }
@@ -111,7 +172,7 @@ Raphael.prototype.ringchart = function(x, y, rad1, rad2, ang1, ang2, steps) {
     }
     
     //path part 5: inner arc starting point to starting point
-    steps1c = Math.ceil(steps1/2);
+    steps1c = Math.ceil(steps_inner/2);
     var tang = angdiff2/steps1c;
     for(var i=1; i<steps1c; i+=1) {
         path.push('L'+(x+rad1*Math.cos(ang2-i*tang)));

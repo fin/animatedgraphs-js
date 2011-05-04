@@ -2,7 +2,11 @@
     <head>
         <title>animate demo</title>
         <script src="3rdparty/raphael.js"></script>
+        <script src="3rdparty/g.raphael/g.raphael.js"></script>
+        <script src="3rdparty/g.raphael/g.bar.path.js"></script>
+        <script src="3rdparty/g.raphael/g.pie.path.js"></script>
         <script src="animate.js"></script>
+        <script src="shapes.js"></script>
     </head>
     <body>
         <div id="testcanvas">
@@ -13,16 +17,20 @@
 
             circle_path = raphael.circlepath(100, 100, 10);
             circle = raphael.path(circle_path);
-            circle.attr({'fill': 'red'});
+            circle.attr({'fill': 'red'}).attr({'stroke': 'transparent'});
 
+  // x = raphael.g.barchart(10, 10, 300, 220, [[55, 20, 13, 32, 5, 1, 2, 10]])
 
-            rectangle_path = raphael.rectpath(100, 100, 100, 50);
-            rectangle = raphael.path(rectangle_path);
+  //  y = raphael.g.piechart(320, 240, 100, [55, 20, 13, 32, 5, 1, 2]);
+  //              y = raphael.g.piechart(320, 240, 100, [55, 20, 13, 32, 5, 1, 2]);
 
-            x = function() { circle.animate({'path': raphael.rectpath(100, 100, 100, 50)}, 1000); 
-                             setTimeout(function() { circle.animate({'path': raphael.circlepath(100, 100, 10)}, 1000); setTimeout(x, 2000); }, 2000);
-            };
+//            rectangle_path = raphael.rectpath(100, 100, 100, 50);
+//            rectangle = raphael.path(rectangle_path).attr({'stroke': 'transparent'});
+//
+//            x = function() { circle.animate({'path': raphael.rectpath(100, 100, 100, 50)}, 1000, ">"); 
+//                setTimeout(function() { circle.animate({'path': raphael.circlepath(100, 100, 10)}, 1000, ">"); setTimeout(x, 2000); }, 2000);
+//            };
 
-            setTimeout(x, 1000);
+//            setTimeout(x, 1000);
         </script>
 </html>
