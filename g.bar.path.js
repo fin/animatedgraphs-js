@@ -64,7 +64,7 @@ Raphael.fn.g.barchart = function (x, y, width, height, values, opts) {
             var h = Math.round((multi ? values[j][i] : values[i]) * Y),
                 top = y + height - barvgutter - h,
                 bar = {
-                        obj: raphael.rectpath(Math.round(X + barwidth / 2), top + h, barwidth, h)
+                        obj: raphael.rectpath(Math.round(X + barwidth / 2), top + h/2, barwidth, h)
                     };
             if (multi) {
                 bars[j].push(bar);
@@ -84,7 +84,8 @@ Raphael.fn.g.barchart = function (x, y, width, height, values, opts) {
         }
         if (opts.stacked) {
             var cvr;
-            covers2.push(cvr = this.rect(stack[0].x - stack[0].w / 2, y, barwidth, height).attr(this.g.shim));
+            covers2.push(cvr = {'obj': this.rectpath(stack[0].x - stack[0].w / 2, y - height/2, barwidth, height),
+                                'attr': this.g.shim});
             cvr.bars = this.set();
             var size = 0;
             for (var s = stack.length; s--;) {
@@ -94,7 +95,7 @@ Raphael.fn.g.barchart = function (x, y, width, height, values, opts) {
                 var bar = stack[s],
                     cover,
                     h = (size + bar.value) * Y,
-                    path = raphael.rectpath(bar.x, y + height - barvgutter - !!size * .5, barwidth, h, true, type, 1);
+                    path = raphael.rectpath(bar.x, y + height - barvgutter - !!size * .5 - h/2, barwidth, h);
                 cvr.bars.push(bar);
                 console.log(size);
                 console.log(bar);
