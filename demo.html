@@ -21,12 +21,81 @@
             //x = raphael.g.barchart(10, 10, 300, 220, [[55, 20, 13, 32, 5, 1, 2, 10]])
             x = raphael.g.barchart(10, 10, 300, 220, [[55, 20, 13, 32, 5, 1, 2, 10], [100, 50]], {stacked: true});
 
-            for(var i=0;i<x.bars.length;i++) {
-                for(var j=0;j<x.bars[i].length;j++) {
-                    var bar = x.bars[i][j];
-                    path = raphael.path((bar.attributes && bar.attributes.path) || bar.obj);
+            paths = [];
+
+
+            function renderPaths(bars) {
+                for(var i=0;i<bars.length;i++) {
+                    if(paths.length<=i) {
+                        paths.push([])
+                    }
+                    for(var j=0;j<bars[i].length;j++) {
+                        var bar = bars[i][j];
+                        if(paths[i].length<=j) {
+                            path = raphael.path((bar.attributes && bar.attributes.path) || bar.obj);
+                            paths[i].push(path);
+                        } else {
+                            path = paths[i][j];
+                            path.animate({'path': (bar.attributes && bar.attributes.path) || bar.obj}, 1024);
+                        }
+                    }
                 }
             }
+
+            renderPaths(x.bars);
+
+            x = raphael.g.barchart(10, 10, 300, 220, [[70, 20, 13, 32, 5, 1, 2, 10], [100, 50]], {stacked: true});
+            renderPaths(x.bars);
+
+
+            data = [            // upper layer: datasets
+                {'male': {'black': 10, 'white': 15, 'asian': 5},
+                 'female': {'black': 5, 'white': 10, 'asian': 2, 'hispanic': 2}
+                }
+            ];
+            
+            
+
+
+            toGraphInput = function(data, index, level, summarize) {
+                summarize = summarize && true;
+                level = level || 0;
+                index = index || 0;
+
+                function summarize_(data, key) {
+                    var d = data[key];
+                    var children = [];
+                    var sum = 0;
+                    if(!Raphael.is(data[key], 'object'))
+                        return [key, data[key]];
+                    for(var k in d) {
+                        if(!d.hasOwnProperty(k))
+                            continue;
+
+                        var summary = summarize_(d,k);
+                        children.push(summary);
+                        sum += summary[1];
+                    }
+                    return [key, sum, children];
+                }
+
+                var d = data[index];
+                return summarize_(d,'male');
+            };
+
+            annotate = function(input, key) {
+                key = key || '';
+
+                input[0] = {'key': key+'-'+input[0], 'original': input[0]};
+
+                if(input.length>2) {
+                    for(var i=0;i<input[2].length;i++) { // 2 = first child element
+                        annotate(input[2][i],input[0]['key']);
+                    }
+                }
+            };
+            input = toGraphInput(data);
+
 
   //  y = raphael.g.piechart(320, 240, 100, [55, 20, 13, 32, 5, 1, 2]);
   //              y = raphael.g.piechart(320, 240, 100, [55, 20, 13, 32, 5, 1, 2]);

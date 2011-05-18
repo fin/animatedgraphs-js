@@ -2,7 +2,7 @@ Raphael.prototype.circlepath = function(x, y, r, steps) {
     // start at top center
 
     if(steps===undefined)
-        steps=1024;
+        steps=256;
 
     var start_x = parseInt(x-r);
     var start_y = parseInt(y);
@@ -26,7 +26,7 @@ Raphael.prototype.circlepath = function(x, y, r, steps) {
 Raphael.prototype.rectpath = function(x,y,a,b,steps) {
     var path = [];
     if(steps==undefined)
-        steps=1024;
+        steps=256;
 
     var altogether = 2*a+2*b;
     var inc = altogether/steps;
