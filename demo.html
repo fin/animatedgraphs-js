@@ -48,18 +48,19 @@
             renderPaths(x.bars);
 
 
-            data = [            // upper layer: datasets
-                {'male': {'black': 10, 'white': 15, 'asian': 5},
-                 'female': {'black': 5, 'white': 10, 'asian': 2, 'hispanic': 2}
-                }
-            ];
-            
-            
+            data = {'levels': ['gender','ethnicity'],
+                    'data':// upper layer: datasets
+                        [
+                            {'male': {'black': 10, 'white': 15, 'asian': 5},
+                             'female': {'black': 5, 'white': 10, 'asian': 2, 'hispanic': 2}
+                            }
+                        ]
+            };
 
 
             toGraphInput = function(data, index, level, summarize) {
                 summarize = summarize && true;
-                level = level || 0;
+                level = data.levels.indexOf(level);
                 index = index || 0;
 
                 function summarize_(data, key) {
@@ -94,7 +95,10 @@
                     }
                 }
             };
-            input = toGraphInput(data);
+            input = toGraphInput(data.data, 0, 'gender');
+
+            
+
 
 
   //  y = raphael.g.piechart(320, 240, 100, [55, 20, 13, 32, 5, 1, 2]);
