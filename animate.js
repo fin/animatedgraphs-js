@@ -82,6 +82,21 @@ function AG(datasets, labels) {
 
 
     self.get_data = function(index, labels) {
+        var dataset = self.datasets_raw[index];
+        var result = {};
+        for(var key in dataset) {
+            var val = dataset[key];
+            if(!dataset.hasOwnProperty(key))
+                continue;
+            var obj = JSON.parse(key);
+            var newkey = {};
+            for(var i=0;i<labels.length;i++) {
+                newkey[labels[i]] = obj[labels[i]];
+            }
+            newkey = newkey.jsonproper();
+            result[newkey] = (result[newkey]||0) + val;
+        }
+        return result;
     };
 
 
