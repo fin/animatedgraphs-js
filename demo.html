@@ -80,7 +80,7 @@
                     return [key, sum, children];
                 }
 
-                var d = data[index];
+                var d = data.data[index];
                 return summarize_(d,'male');
             };
 
@@ -95,7 +95,7 @@
                     }
                 }
             };
-            input = toGraphInput(data.data, 0, 'gender');
+            input = toGraphInput(data, 0, 'gender');
 
             
 
