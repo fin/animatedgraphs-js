@@ -2,7 +2,7 @@ function AG(datasets, labels) {
     var self = this;
 
     self.datasets = datasets;
-    self.dataset_sums = [];
+    self.datasets_raw = [];
     self.labels = labels;
 
     self.dataset = null;
@@ -31,11 +31,11 @@ function AG(datasets, labels) {
                 if(!input.hasOwnProperty(k))
                     continue;
                 annotate(input[k], level+1);
-                input[self.labels[level]+'-'+k] = input[k];
+                input[self.labels[level]+':'+k] = input[k];
                 delete input[k];
             }
         };
-        annotate(dataset, 0);
+        annotate(dataset, 0, {});
     };
 
     self.summarize_datasets = function() {
@@ -44,51 +44,24 @@ function AG(datasets, labels) {
         }
     };
     self.summarize_dataset = function(dataset_index) {
-        var result = {};
-        for(var index=0;index<self.labels.length;index++) {
-            result[self.labels[index]] = self.summarize_dataset_recurse(self.datasets[dataset_index], index);
-        }
-        self.dataset_sums.push(result);
+        var dataset = self.datasets[dataset_index];
+        self.datasets_raw.push(self.summarize_dataset_recurse(dataset, [],0));
     };
-    self.summarize_dataset_recurse = function(obj, depth) {
-        if(depth<0) {
-            if(Raphael.is(obj, 'object')) {
-                var sum = 0;
-                for(var key in obj) {
-                    if(!obj.hasOwnProperty(key))
-                        continue;
-                    sum += self.summarize_dataset_recurse(obj[key], depth-1);
-                }
-                return sum;
-            } else {
-                return obj;
-            }
-        } else if(depth==0) {
-            var result = {};
+    self.summarize_dataset_recurse = function(obj, current_key, depth) {
+        var result = {};
+        if(Raphael.is(obj, 'object')) {
             for(var key in obj) {
                 if(!obj.hasOwnProperty(key))
                     continue;
-                result[key]=self.summarize_dataset_recurse(obj[key], depth-1);
+                var val = obj[key];
+                var ck = current_key.clone();
+                ck[self.labels[depth]]=key;
+                result = result.merge(self.summarize_dataset_recurse(val, ck, depth+1));
             }
             return result;
         } else {
-            var results = {};
-            var temp_results = []
-            for(var key in obj) {
-                if(!obj.hasOwnProperty(key))
-                    continue;
-                temp_results.push(self.summarize_dataset_recurse(obj[key], depth-1));
-            }
-            console.log(temp_results);
-            for(var index in temp_results) {
-                var temp_result = temp_results[index];
-                for(var key in temp_result) {
-                    if(!temp_result.hasOwnProperty(key))
-                        continue;
-                    results[key] = (key in results?results[key]:0) + temp_result[key];
-                }
-            }
-            return results;
+            result[current_key.jsonproper()] = obj;
+            return result;
         }
     };
 
@@ -100,7 +73,6 @@ function AG(datasets, labels) {
         var chart_function = self.chart_functions[chart_type];
 
         chart_function(10,10,300,300, data);
-        
         if(old_elements) {
             // TBI
         } else {
@@ -113,12 +85,37 @@ function AG(datasets, labels) {
     };
 
 
-
-
     self.annotate_datasets();
+    self.summarize_datasets();
 }
 
 
 //var ag = new AG({}, []);
 //
 //e.bind('click', ag.chart);
+Object.prototype.clone = function() {
+  var newObj = (this instanceof Array) ? [] : {};
+  for (i in this) {
+    if (i == 'clone') continue;
+    if (this[i] && typeof this[i] == "object") {
+      newObj[i] = this[i].clone();
+    } else newObj[i] = this[i]
+  } return newObj;
+};
+
+Object.prototype.jsonproper = function() {
+    var keys = [];
+    for(var key in this) {
+        if(!this.hasOwnProperty(key))
+            continue;
+        keys.push(key);
+    }
+    keys.sort();
+    var result = {};
+    for(var i=0;i<keys.length;i++) {
+        result[keys[i]] = this[keys[i]];
+    }
+    return JSON.stringify(result);
+};
+Object.prototype.merge = (function (ob) {var o = this;var i = 0;for (var z in ob) {if (ob.hasOwnProperty(z)) {o[z] = ob[z];}}return o;})
+
