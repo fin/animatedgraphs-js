@@ -97,7 +97,9 @@ function AG(datasets, labels) {
 
     self.get_data = function(labels) {
         var dataset = self.dataset_raw;
-        var result = {};
+        var raw_values = {};
+        var lbls = labels;
+
         for(var key in dataset) {
             var val = dataset[key];
             if(!dataset.hasOwnProperty(key))
@@ -108,8 +110,29 @@ function AG(datasets, labels) {
                 newkey[labels[i]] = obj[labels[i]];
             }
             newkey = newkey.jsonproper();
-            result[newkey] = (result[newkey]||0) + val;
+            raw_values[newkey] = (raw_values[newkey]||0) + val;
         }
+
+        var result = [];
+        for(var key in raw_values) {
+            if(!raw_values.hasOwnProperty(key))
+                continue;
+            var value = raw_values[key];
+            result.push({'filter': key, 'value': value});
+        }
+        result.sort(function(x,y) {
+            var k1 = JSON.parse(x.filter);
+            var k2 = JSON.parse(y.filter);
+            for(var i=0;i<lbls.length;i++) {
+                var lbl = lbls[i];
+                if(k1[lbl] == k2[lbl])
+                    continue;
+                return k1[lbl] < k2[lbl];
+            }
+            return 0;
+        });
+
+
         return result;
     };
 

@@ -5,6 +5,7 @@
  * Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license.
  */
 Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
+    var raphael = this;
     opts = opts || {};
     var type = {round: "round", sharp: "sharp", soft: "soft"}[opts.type] || "square",
         gutter = parseFloat(opts.gutter || "20%"),
@@ -12,26 +13,26 @@ Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
         bars = [],
         covers = this.set(),
         covers2 = this.set(),
-        total = Math.max.apply(Math, values),
+        total = Math.max.apply(Math, values.map(function(x) { return x.value})),
         stacktotal = [],
         paper = this,
         multi = 0,
         colors = opts.colors || this.g.colors,
         len = values.length;
-    if (this.raphael.is(values[0], "array")) {
+    if (Raphael.is(values[0], "array")) {
         total = [];
         multi = len;
         len = 0;
         for (var i = values.length; i--;) {
             bars.push([]);
-            total.push(Math.max.apply(Math, values[i]));
+            total.push(Math.max.apply(Math, values[i].map(function(x) { return x.value; })));
             len = Math.max(len, values[i].length);
         }
         if (opts.stacked) {
             for (var i = len; i--;) {
                 var tot = 0;
                 for (var j = values.length; j--;) {
-                    tot +=+ values[j][i] || 0;
+                    tot +=+ values[j][i].value || 0;
                 }
                 stacktotal.push(tot);
             }
@@ -61,7 +62,7 @@ Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
     for (var i = 0; i < len; i++) {
         stack = [];
         for (var j = 0; j < (multi || 1); j++) {
-            var h = Math.round((multi ? values[j][i] : values[i]) * Y),
+            var h = Math.round((multi ? values[j][i].value : values[i].value) * Y),
                 top = y + height - barvgutter - h,
                 bar = {
                         obj: raphael.rectpath(Math.round(X + barwidth / 2), top + h/2, barwidth, h),
@@ -76,7 +77,7 @@ Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
             bar.x = Math.round(X + barwidth / 2);
             bar.w = barwidth;
             bar.h = h;
-            bar.value = multi ? values[j][i] : values[i];
+            bar.value = multi ? values[j][i].value : values[i].value;
             if (!opts.stacked) {
                 X += barwidth;
             } else {
