@@ -6,17 +6,26 @@ function AG(datasets, labels) {
     self.labels = labels;
 
     self.dataset = null;
+    self.dataset_raw = null;
     self.current_chart_type = null;
     self.current_elements = null;
+    self.size_x = 400;
+    self.size_y = 400;
+
+    self.raphael = new Raphael();
+    var raphael = self.raphael;
+    var width = raphael.width;
+    var height = raphael.height;
 
 
     self.chart_functions =  {
-                    'bar_grouped': raphael.g.barchart,
+                    'bar_grouped': function(values) { return raphael.g.barchart_paths(0,0,width,height,values); },
                 };
 
 
     self.set_dataset = function(id) {
         self.dataset = self.datasets[id];
+        self.dataset_raw = self.datasets_raw[id];
     };
 
     self.annotate_datasets = function() {
@@ -70,9 +79,14 @@ function AG(datasets, labels) {
         var old_chart_type = chart_type;
         var old_elements = self.current_elements;
 
+        var data = self.get_data(labels);
+
         var chart_function = self.chart_functions[chart_type];
 
-        chart_function(10,10,300,300, data);
+        var g = chart_function(data);
+        for(var i=0;i<g.elements.length;i++) {
+            raphael.path(g.elements[i].path);
+        }
         if(old_elements) {
             // TBI
         } else {
@@ -81,8 +95,8 @@ function AG(datasets, labels) {
 
 
 
-    self.get_data = function(index, labels) {
-        var dataset = self.datasets_raw[index];
+    self.get_data = function(labels) {
+        var dataset = self.dataset_raw;
         var result = {};
         for(var key in dataset) {
             var val = dataset[key];
@@ -102,6 +116,8 @@ function AG(datasets, labels) {
 
     self.annotate_datasets();
     self.summarize_datasets();
+
+    self.set_dataset(0);
 }
 
 

@@ -4,7 +4,7 @@
  * Copyright (c) 2009 Dmitry Baranovskiy (http://g.raphaeljs.com)
  * Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license.
  */
-Raphael.fn.g.barchart = function (x, y, width, height, values, opts) {
+Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
     opts = opts || {};
     var type = {round: "round", sharp: "sharp", soft: "soft"}[opts.type] || "square",
         gutter = parseFloat(opts.gutter || "20%"),
@@ -64,7 +64,8 @@ Raphael.fn.g.barchart = function (x, y, width, height, values, opts) {
             var h = Math.round((multi ? values[j][i] : values[i]) * Y),
                 top = y + height - barvgutter - h,
                 bar = {
-                        obj: raphael.rectpath(Math.round(X + barwidth / 2), top + h/2, barwidth, h)
+                        obj: raphael.rectpath(Math.round(X + barwidth / 2), top + h/2, barwidth, h),
+                        path: raphael.rectpath(Math.round(X + barwidth / 2), top + h/2, barwidth, h)
                     };
             if (multi) {
                 bars[j].push(bar);
@@ -85,6 +86,7 @@ Raphael.fn.g.barchart = function (x, y, width, height, values, opts) {
         if (opts.stacked) {
             var cvr;
             covers2.push(cvr = {'obj': this.rectpath(stack[0].x - stack[0].w / 2, y - height/2, barwidth, height),
+                                'path': this.rectpath(stack[0].x - stack[0].w / 2, y - height/2, barwidth, height),
                                 'attr': this.g.shim});
             cvr.bars = this.set();
             var size = 0;
@@ -115,6 +117,7 @@ Raphael.fn.g.barchart = function (x, y, width, height, values, opts) {
     chart.bars = bars;
     chart.covers = covers;
     chart.covers2 = covers2;
+    chart.elements = chart.bars;
     return chart;
 };
 Raphael.fn.g.hbarchart = function (x, y, width, height, values, opts) {
