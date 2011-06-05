@@ -114,7 +114,9 @@ function AG(datasets, labels) {
 
         var g = chart_function(data);
         if(old_elements) {
-            // TBI
+            for(var i=0;i<g.elements.length;i++) {
+                var element = g.elements[i];
+            }
         } else {
             for(var i=0;i<g.elements.length;i++) {
                 self.current_elements.push(raphael.path(g.elements[i].path));
@@ -130,43 +132,56 @@ function AG(datasets, labels) {
      */
     self.get_data = function(labels) {
         var dataset = self.dataset_raw;
-        var raw_values = {};
+        var raw_values = [];
         var lbls = labels;
 
-        for(var key in dataset) {
-            var val = dataset[key];
-            if(!dataset.hasOwnProperty(key))
-                continue;
-            var obj = JSON.parse(key);
-            var newkey = {};
-            for(var i=0;i<labels.length;i++) {
-                newkey[labels[i]] = obj[labels[i]];
-            }
-            newkey = newkey.jsonproper();
-            raw_values[newkey] = (raw_values[newkey]||0) + val;
-        }
+        var tmp = [];
 
-        var result = [];
-        for(var key in raw_values) {
-            if(!raw_values.hasOwnProperty(key))
-                continue;
-            var value = raw_values[key];
-            result.push({'filter': key, 'value': value});
-        }
-        result.sort(function(x,y) {
-            var k1 = JSON.parse(x.filter);
-            var k2 = JSON.parse(y.filter);
-            for(var i=0;i<lbls.length;i++) {
-                var lbl = lbls[i];
-                if(k1[lbl] == k2[lbl])
+        var label_values = [];
+
+        for(var i=0;i<labels.length;i++) {
+            var label = labels[i];
+            label_values.push([]);
+            for(var key in dataset) {
+                if(!dataset.hasOwnProperty(key))
                     continue;
-                return k1[lbl] < k2[lbl];
+                var k = JSON.parse(key)[label];
+                if(label_values[i].indexOf(k)<0) {
+                    label_values[i].push(k);
+                }
+                raw_values.push({key: JSON.parse(key), value: dataset[key]});
             }
-            return 0;
-        });
+        }
 
-
-        return result;
+        var recurse = function(values, index, labels, label_values) {
+            console.log(values, index, labels, label_values);
+            var result = [];
+            for(var i=0;i<label_values[index].length;i++) {
+                var lv = label_values[index][i];
+                var fv = values.filter(function(x) { return x.key[labels[index]]==lv;  });
+                if(index+1<labels.length) {
+                    fv = recurse(fv, index+1, labels, label_values);
+                    result.push(fv);
+                } else {
+                    if(fv.length>0) {
+                        var s = 0;
+                        var k = {};
+                        for(var j=0;j<fv.length;j++) {
+                            s+=fv[j].value;
+                        }
+                        for(var j=0;j<labels.length;j++) {
+                            var l = labels[j];
+                            console.log(l);
+                            k[l] = fv[0].key[l];
+                        }
+                        result.push({key: k, value: s});
+                    }
+                }
+            }
+            console.log('result', result);
+            return result;
+        }
+        return recurse(raw_values, 0, labels, label_values);
     };
 
 
