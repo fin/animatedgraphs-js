@@ -1,3 +1,11 @@
+/*
+ *
+ * AnimatedGraphs:
+ * datasets = array of objects, e.g. [{male: {asian: 1, african: 2}, female: {asian: 3, african: 2}}]
+ * labels = labels for objects, e.g. ['gender', 'ethnicity']
+ *
+ */
+
 function AG(datasets, labels) {
     var self = this;
 
@@ -23,17 +31,24 @@ function AG(datasets, labels) {
                 };
 
 
+    /* 
+     * switch dataset
+     */
     self.set_dataset = function(id) {
         self.dataset = self.datasets[id];
         self.dataset_raw = self.datasets_raw[id];
     };
 
+    /* 
+     * annotate
+     * prepend object keys in datasets with their respective labels
+     * (for unique identification later on)
+     */
     self.annotate_datasets = function() {
         for(var i=0;i<self.datasets.length;i++) {
             self.annotate_dataset(self.datasets[i]);
         }
     };
-
     self.annotate_dataset = function(dataset) {
         var annotate = function(input, level) {
             for(var k in input) {
@@ -47,6 +62,11 @@ function AG(datasets, labels) {
         annotate(dataset, 0, {});
     };
 
+    /*
+     * summarize
+     * basically denormalize datasets in this.datasets_raw
+     * enables easier filtering and transformations later on
+     */
     self.summarize_datasets = function() {
         for(var i=0;i<self.datasets.length;i++) {
             self.summarize_dataset(i);
@@ -75,26 +95,39 @@ function AG(datasets, labels) {
     };
 
 
+    /*
+     * draw/change chart
+     *
+     * e.g.
+     * chart('bar', ['gender']);
+     * or
+     * chart('bar-grouped', ['gender', 'ethnicity'])
+     */
     self.chart = function(chart_type, labels) {
         var old_chart_type = chart_type;
         var old_elements = self.current_elements;
+        self.current_elements = [];
 
         var data = self.get_data(labels);
 
         var chart_function = self.chart_functions[chart_type];
 
         var g = chart_function(data);
-        for(var i=0;i<g.elements.length;i++) {
-            raphael.path(g.elements[i].path);
-        }
         if(old_elements) {
             // TBI
         } else {
+            for(var i=0;i<g.elements.length;i++) {
+                self.current_elements.push(raphael.path(g.elements[i].path));
+            }
         }
     };
 
 
 
+    /*
+     * get_data
+     * get data formatted for g.raphael-like input
+     */
     self.get_data = function(labels) {
         var dataset = self.dataset_raw;
         var raw_values = {};
