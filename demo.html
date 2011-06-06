@@ -12,64 +12,6 @@
         </div>
     </body>
     <script type="text/javascript">
-
-
-
-            function renderPaths(bars) {
-                for(var i=0;i<bars.length;i++) {
-                    if(paths.length<=i) {
-                        paths.push([])
-                    }
-                    for(var j=0;j<bars[i].length;j++) {
-                        var bar = bars[i][j];
-                        if(paths[i].length<=j) {
-                            path = raphael.path((bar.attributes && bar.attributes.path) || bar.obj);
-                            paths[i].push(path);
-                        } else {
-                            path = paths[i][j];
-                            path.animate({'path': (bar.attributes && bar.attributes.path) || bar.obj}, 1024);
-                        }
-                    }
-                }
-            }
-            toGraphInput = function(data, index, level, summarize) {
-                summarize = summarize && true;
-                level = data.levels.indexOf(level);
-                index = index || 0;
-
-                function summarize_(data, key) {
-                    var d = data[key];
-                    var children = [];
-                    var sum = 0;
-                    if(!Raphael.is(data[key], 'object'))
-                        return [key, data[key]];
-                    for(var k in d) {
-                        if(!d.hasOwnProperty(k))
-                            continue;
-
-                        var summary = summarize_(d,k);
-                        children.push(summary);
-                        sum += summary[1];
-                    }
-                    return [key, sum, children];
-                }
-
-                var d = data.data[index];
-                return summarize_(d,'male');
-            };
-
-            annotate = function(input, key) {
-                key = key || '';
-
-                input[0] = {'key': key+'-'+input[0], 'original': input[0]};
-
-                if(input.length>2) {
-                    for(var i=0;i<input[2].length;i++) { // 2 = first child element
-                        annotate(input[2][i],input[0]['key']);
-                    }
-                }
-            };
-
             data = {'levels': ['gender','ethnicity'],
                     'data':// upper layer: datasets
                         [
@@ -86,5 +28,17 @@
             a = new AG(data.data, data.levels);
 
 
+
+            var dsid = 1;
+
+            refresh = function() {
+                console.log('refresh');
+                a.set_dataset(dsid);
+                a.chart('bar_grouped', ['ethnicity']);
+                dsid = 1-dsid;
+                setTimeout(refresh, 4096);
+            }
+
+            refresh();
         </script>
 </html>
