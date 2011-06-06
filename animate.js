@@ -136,7 +136,7 @@ function AG(datasets, labels) {
                 } else {
                     element.raphael_element = raphael.path(element.path);
                 }
-                element.raphael_element.animate({'path': element.path});
+                element.raphael_element.animate({'path': element.path}, 1024);
                 element.raphael_element.attr(element.attr);
                 self.current_elements.push(element);
             }
