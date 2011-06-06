@@ -137,6 +137,7 @@ function AG(datasets, labels) {
                     element.raphael_element = raphael.path(element.path);
                 }
                 element.raphael_element.animate({'path': element.path});
+                element.raphael_element.attr(element.attr);
                 self.current_elements.push(element);
             }
             for(var i=0;i<old_elements.length;i++) {
@@ -145,6 +146,7 @@ function AG(datasets, labels) {
         } else {
             for(var i=0;i<g.elements.length;i++) {
                 g.elements[i].raphael_element = raphael.path(g.elements[i].path);
+                g.elements[i].raphael_element.attr(g.elements[i].attr);
                 self.current_elements.push(g.elements[i]);
             }
             self.current_chart_type = chart_type;
