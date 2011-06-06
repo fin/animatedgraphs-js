@@ -104,7 +104,7 @@ function AG(datasets, labels) {
      * chart('bar-grouped', ['gender', 'ethnicity'])
      */
     self.chart = function(chart_type, labels) {
-        var old_chart_type = chart_type;
+        var old_chart_type = self.current_chart_type;
         var old_elements = self.current_elements;
         self.current_elements = [];
 
@@ -116,11 +116,38 @@ function AG(datasets, labels) {
         if(old_elements) {
             for(var i=0;i<g.elements.length;i++) {
                 var element = g.elements[i];
+                var matching_elements = [];
+                for(var j=0;j<old_elements.length;j++) {
+                    var old_element = old_elements[j];
+                    var key = old_element.key;
+                    for(var k=0;k<labels.length;k++) {
+                        var label = labels[k];
+                        if(key[label] && key[label] == element.key[label]) {
+                            matching_elements.push(old_element);
+                        }
+                    }
+                }
+                console.log('matching', matching_elements);
+                if(matching_elements.length>0) {
+                    element.raphael_element = matching_elements[0].raphael_element;
+                    var ndx = old_elements.indexOf(matching_elements[0]);
+                    if(ndx>=0)
+                        old_elements.splice(ndx,1);
+                } else {
+                    element.raphael_element = raphael.path(element.path);
+                }
+                element.raphael_element.animate({'path': element.path});
+                self.current_elements.push(element);
+            }
+            for(var i=0;i<old_elements.length;i++) {
+                old_elements[i].raphael_element.remove();
             }
         } else {
             for(var i=0;i<g.elements.length;i++) {
-                self.current_elements.push(raphael.path(g.elements[i].path));
+                g.elements[i].raphael_element = raphael.path(g.elements[i].path);
+                self.current_elements.push(g.elements[i]);
             }
+            self.current_chart_type = chart_type;
         }
     };
 

@@ -66,7 +66,8 @@ Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
                 top = y + height - barvgutter - h,
                 bar = {
                         obj: raphael.rectpath(Math.round(X + barwidth / 2), top + h/2, barwidth, h),
-                        path: raphael.rectpath(Math.round(X + barwidth / 2), top + h/2, barwidth, h)
+                        path: raphael.rectpath(Math.round(X + barwidth / 2), top + h/2, barwidth, h),
+                        key: multi?values[j][i].key : values[i].key
                     };
             if (multi) {
                 bars[j].push(bar);
