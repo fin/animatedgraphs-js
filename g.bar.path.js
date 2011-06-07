@@ -42,7 +42,6 @@ Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
     }
 
     total = (opts.to) || total;
-    console.log(total);
     var barwidth = opts['barwidth'] || (width / (len * (100 + gutter) + gutter) * 100),
         barhgutter = barwidth * gutter / 100,
         barvgutter = opts.vgutter == null ? 20 : opts.vgutter,
@@ -66,9 +65,8 @@ Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
                         path: raphael.rectpath(Math.round(X + barwidth / 2), top + h/2, barwidth, h),
                         key: multi?values[j][i].key : values[i].key,
                         attr: {stroke: "none", fill: colors[multi ? j : i]},
-                        value: multi ? values[j][i].value : values[i].value
+                        value: multi ? values[j][i].value : values[i].value,
                     };
-            console.log(bar.key, bar.value);
             if (multi) {
                 bars[j].push(bar);
             } else {
@@ -78,6 +76,7 @@ Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
             bar.x = Math.round(X + barwidth / 2);
             bar.w = barwidth;
             bar.h = h;
+            bar.zindex = bar.value;
             bar.value = multi ? values[j][i].value : values[i].value;
             if (!opts.stacked) {
                 X += barwidth;
@@ -92,9 +91,6 @@ Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
                                 'attr': this.g.shim});
             cvr.bars = this.set();
             var size = 0;
-            for (var s = stack.length; s--;) {
-                stack[s].zindex=0-stack[s].value;
-            }
             for (var s = 0, ss = stack.length; s < ss; s++) {
                 var bar = stack[s],
                     cover,

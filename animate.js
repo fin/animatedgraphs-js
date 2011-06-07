@@ -141,7 +141,6 @@ function AG(datasets, labels) {
                 if(matching_elements.length>0) {
                     element.raphael_element = matching_elements[0].raphael_element;
                     var ndx = old_elements.indexOf(matching_elements[0]);
-                    console.log(element.value, matching_elements[0].value);
                     if(ndx>=0) {
                         old_elements.splice(ndx,1);
                     } else {}
@@ -161,13 +160,14 @@ function AG(datasets, labels) {
             for(var i=0;i<g.elements.length;i++) {
                 g.elements[i].raphael_element = raphael.path(g.elements[i].path);
                 g.elements[i].raphael_element.attr(g.elements[i].attr);
-                if(g.elements[i].zindex && max_zindex<g.elements[i].zindex)
+                if(g.elements[i].zindex && max_zindex<g.elements[i].zindex) {
                     max_zindex = g.elements[i].zindex;
+                }
                 self.current_elements.push(g.elements[i]);
             }
             self.current_chart_type = chart_type;
         }
-        for(var zi=0;zi<max_zindex;zi++) {
+        for(var zi=max_zindex-1;zi>=0;zi--) {
             var es = self.current_elements.filter(function(x) {return x.zindex==zi;});
             for(var i=0;i<es.length;i++) {
                 es[i].raphael_element.toFront();
