@@ -29,88 +29,33 @@
         <script type="text/javascript">
             raphael = new Raphael("testcanvas", 650, 420);
 
-            //circle_path = raphael.circlepath(100, 100, 10);
-            //circle = raphael.path(circle_path);
-            //circle.attr({'fill': 'red'}).attr({'stroke': 'transparent'});
+            data = {'levels': ['gender','ethnicity'],
+                    'data':// upper layer: datasets
+                        [
+                            {'male': {'black': 10, 'white': 15, 'asian': 5},
+                             'female': {'black': 5, 'white': 10, 'asian': 2, 'hispanic': 2}
+                            },
+                            {'male': {'black': 16, 'white': 15, 'asian': 5},
+                             'female': {'black': 50, 'white': 10, 'asian': 2, 'hispanic': 2}
+                            }
+                        ]
+            };
 
-            //x = raphael.g.barchart(10, 10, 300, 220, [[55, 20, 13, 32, 5, 1, 2, 10]])
-            //x = raphael.g.barchart(10, 10, 300, 220, [[55, 20, 13, 32, 5, 1, 2, 10], [100, 50]], {stacked: true});
-          
-            //y = raphael.g.piechart(325, 210, 150, [55, 20, 13, 32, 5, 1, 2]);
-            //y = raphael.g.ringchart(325, 210, 150, 2, [[55, 0], [20, 1], [13, 2], [32, 1]]);
-            y = raphael.g.ringchart(325, 210, 150, 4, [[55, 1], [20, 2], [10, 1], [35, 3],
-                                                       [15, 2], [45, 1], [15, 0], [25, 2],]);
-            
-            /*for(var i=0;i<x.bars.length;i++)
-            {
-                for(var j=0;j<x.bars[i].length;j++)
-                {
-                    var bar = x.bars[i][j];
-                    path = raphael.path((bar.attributes && bar.attributes.path) || bar.obj);
-                }
-            }    */
-            
 
-            for(var i=0;i<y.sectors.length;i++)
-            {
-                //for(var j=0;j<x.bars[i].length;j++)
-                {
-                    var baro = y.sectors[i];
-                    //path = raphael.path((bar.attributes && bar.attributes.path) || bar.obj);
-                    patho = raphael.path(baro);
-                    patho.attr({'fill': 'grey'}).attr({'stroke': 'transparent'});
-                }
-            }
-            
-            //y = raphael.g.piechart(320, 240, 100, [55, 20, 13, 32, 5, 1, 2]);
-            
-            paths = [];
+            a = new AG(data.data, data.levels);
 
-            //TODO: change data structure and adapt g.pie.path code
-            //enhance pie chart to ring chart capabilities
-            function renderPaths(series)
-            {
-                for(var i=0;i<series.length;i++)
-                {
-                    if(paths.length<=i)
-                    {
-                        paths.push([])
-                    }
-                    //for(var j=0;j<series[i].length;j++)
-                    for(var j=0;j<3;j++)
-                    {
-                        var pie = series[i][j];    //TODO: still a one-dimensional array!!
-                        if(paths[i].length<=j)
-                        {
-                            path = raphael.path((pie.attributes && pie.attributes.path) || pie.obj);
-                            paths[i].push(path);
-                        }
-                        else
-                        {
-                            path = paths[i][j];
-                            path.animate({'path': (pie.attributes && pie.attributes.path) || pie.obj}, 1024);
-                        }
-                    }
-                }
+
+
+            var dsid = 1;
+
+            refresh = function() {
+                a.set_dataset(dsid);
+                a.chart('pie_grouped', ['ethnicity']);
+                dsid = 1-dsid;
+                setTimeout(refresh, 2096);
             }
 
-            //renderPaths(y.series);
-            
-            //y = raphael.g.piechart(320, 240, 100, [85, 10, 3, 12, 5, 1, 2]);
-            //renderPaths(y.series);
-            //z = raphael.g.piechart(320, 240, 150, [55, 20, 13, 32, 5, 1, 2, 10]);
-
-  //  y = raphael.g.piechart(320, 240, 100, [55, 20, 13, 32, 5, 1, 2]);
-  //              y = raphael.g.piechart(320, 240, 100, [55, 20, 13, 32, 5, 1, 2]);
-
-//            rectangle_path = raphael.rectpath(100, 100, 100, 50);
-//            rectangle = raphael.path(rectangle_path).attr({'stroke': 'transparent'});
-//
-//            x = function() { circle.animate({'path': raphael.rectpath(100, 100, 100, 50)}, 1000, ">"); 
-//                setTimeout(function() { circle.animate({'path': raphael.circlepath(100, 100, 10)}, 1000, ">"); setTimeout(x, 2000); }, 2000);
-//            };
-
-//            setTimeout(x, 1000);
+            refresh();
         </script>
         </p>
 </html>
