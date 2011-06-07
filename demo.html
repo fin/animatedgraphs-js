@@ -32,7 +32,6 @@
             var dsid = 1;
 
             refresh = function() {
-                console.log('refresh');
                 a.set_dataset(dsid);
                 a.chart('bar_grouped', ['ethnicity']);
                 dsid = 1-dsid;

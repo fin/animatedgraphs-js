@@ -127,7 +127,6 @@ function AG(datasets, labels) {
                         }
                     }
                 }
-                console.log('matching', matching_elements);
                 if(matching_elements.length>0) {
                     element.raphael_element = matching_elements[0].raphael_element;
                     var ndx = old_elements.indexOf(matching_elements[0]);
@@ -183,7 +182,6 @@ function AG(datasets, labels) {
         }
 
         var recurse = function(values, index, labels, label_values) {
-            console.log(values, index, labels, label_values);
             var result = [];
             for(var i=0;i<label_values[index].length;i++) {
                 var lv = label_values[index][i];
@@ -200,16 +198,14 @@ function AG(datasets, labels) {
                         }
                         for(var j=0;j<labels.length;j++) {
                             var l = labels[j];
-                            console.log(l);
                             k[l] = fv[0].key[l];
                         }
                         result.push({key: k, value: s});
                     }
                 }
             }
-            console.log('result', result);
             return result;
-        }
+        };
         return recurse(raw_values, 0, labels, label_values);
     };
 
