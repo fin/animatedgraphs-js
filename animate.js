@@ -96,6 +96,22 @@ function AG(datasets, labels) {
         }
     };
 
+    self.match_elements = function(key, labels, elements) {
+        var matching_elements = [];
+        for(var j=0;j<elements.length;j++) {
+            var element = elements[j];
+            var key = element.key;
+            for(var k=0;k<labels.length;k++) {
+                var label = labels[k];
+                if(key[label] && key[label] == key[label]) {
+                    if(k==labels.length-1) {
+                        matching_elements.push(element);
+                    }
+                }
+            }
+        }
+        return matching_elements;
+    };
 
     /*
      * draw/change chart
@@ -120,22 +136,13 @@ function AG(datasets, labels) {
         if(old_elements) {
             for(var i=0;i<g.elements.length;i++) {
                 var element = g.elements[i];
-                var matching_elements = [];
-                for(var j=0;j<old_elements.length;j++) {
-                    var old_element = old_elements[j];
-                    var key = old_element.key;
-                    for(var k=0;k<labels.length;k++) {
-                        var label = labels[k];
-                        if(key[label] && key[label] == element.key[label]) {
-                            matching_elements.push(old_element);
-                        }
-                    }
-                }
+                var matching_elements = self.match_elements(element.key, labels, old_elements);
                 if(matching_elements.length>0) {
                     element.raphael_element = matching_elements[0].raphael_element;
                     var ndx = old_elements.indexOf(matching_elements[0]);
-                    if(ndx>=0)
+                    if(ndx>=0) {
                         old_elements.splice(ndx,1);
+                    } else {}
                 } else {
                     element.raphael_element = raphael.path(element.path);
                 }
