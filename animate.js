@@ -1,15 +1,15 @@
-/*
+/**
+ * <pAnimatedGraphs:</p>
  *
- * AnimatedGraphs:
- * datasets = array of objects, e.g. [{male: {asian: 1, african: 2}, female: {asian: 3, african: 2}}]
- * labels = labels for objects, e.g. ['gender', 'ethnicity']
- *
- */
-
-/** @class
+ * <p>graphs & animations between them.</p>
+ * <p>wraps raphael.js</p>
  *
  *
+ * <pre>datasets = array of objects, e.g. [{male: {asian: 1, african: 2}, female: {asian: 3, african: 2}}]</pre>
+ * <pre>labels = labels for objects, e.g. ['gender', 'ethnicity']</pre>
  *
+ *
+ * @class
  */
 function AG(/** [{…key:value…}] */ datasets, /** [String] */ labels) {
     
@@ -39,14 +39,12 @@ function AG(/** [{…key:value…}] */ datasets, /** [String] */ labels) {
                 };
 
 
-    /* 
-     * switch dataset
-     */
-    /** @memberOf AG#
-     * @name AG#set_dataset
+    /**
+     * switch dataset to index. need to call .chart() to take effect!
+     * @memberOf AG#
      * @public
      */
-    self.set_dataset = function(id) {
+    self.set_dataset = function(/** int */ id) /** void */{
         self.dataset = self.datasets[id];
         self.dataset_raw = self.datasets_raw[id];
     };
@@ -157,11 +155,11 @@ function AG(/** [{…key:value…}] */ datasets, /** [String] */ labels) {
      * or
      * chart('bar-grouped', ['gender', 'ethnicity'])
      */
-    /** @memberOf AG#
-     *  @name chart
+     /**
+     *  The workhorse. Draw (with animation from a current chart, if valid) a chart using the current dataset
+      * @methodOf AG#
      *  @public
      *
-     *  The workhorse. Draw (with animation from a current chart, if valid) a chart using the current dataset
      */
     self.chart = function(/** String */ chart_type, /** [String] */labels) /** void */ {
         var old_chart_type = self.current_chart_type;
