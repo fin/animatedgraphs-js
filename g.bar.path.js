@@ -73,7 +73,8 @@ Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
                         obj: raphael.rectpath(Math.round(X + barwidth / 2), top + h/2, barwidth, h),
                         path: raphael.rectpath(Math.round(X + barwidth / 2), top + h/2, barwidth, h),
                         key: multi?values[j][i].key : values[i].key,
-                        attr: {stroke: "none", fill: colors[multi ? j : i]}
+                        attr: {stroke: "none", fill: colors[multi ? j : i]},
+                        value: multi ? values[j][i].value : values[i].value
                     };
             if (multi) {
                 bars[j].push(bar);
@@ -98,8 +99,9 @@ Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
                                 'attr': this.g.shim});
             cvr.bars = this.set();
             var size = 0;
+            stack.sort(function(x,y) {return x.value-y.value});
             for (var s = stack.length; s--;) {
-                stack[s].zindex=s;
+                stack[s].zindex=0-stack[s].value;
             }
             for (var s = 0, ss = stack.length; s < ss; s++) {
                 var bar = stack[s],
