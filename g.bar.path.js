@@ -33,7 +33,7 @@ Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
                 var tot = 0;
                 for (var j = values.length; j--;) {
                     if(values[j].length>i)
-                        tot +=+ values[j][i].value || 0;
+                        tot += values[j][i].value || 0;
                 }
                 stacktotal.push(tot);
             }
@@ -92,7 +92,6 @@ Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
                                 'attr': this.g.shim});
             cvr.bars = this.set();
             var size = 0;
-            stack.sort(function(x,y) {return x.value-y.value});
             for (var s = stack.length; s--;) {
                 stack[s].zindex=0-stack[s].value;
             }

@@ -141,6 +141,7 @@ function AG(datasets, labels) {
                 if(matching_elements.length>0) {
                     element.raphael_element = matching_elements[0].raphael_element;
                     var ndx = old_elements.indexOf(matching_elements[0]);
+                    console.log(element.value, matching_elements[0].value);
                     if(ndx>=0) {
                         old_elements.splice(ndx,1);
                     } else {}
