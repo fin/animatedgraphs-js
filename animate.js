@@ -28,8 +28,8 @@ function AG(datasets, labels) {
 
     self.chart_functions =  {
                     'bar': function(values) { return raphael.g.barchart_paths(0,0,width,height,values); },
-                    'bar_grouped': function(values) { return raphael.g.barchart_paths(0,0,width,height,values, {barwidth: 40, gutter: '100%'}); },
-                    'bar_stacked': function(values) { return raphael.g.barchart_paths(0,0,width,height,values, {stacked: true, barwidth: 40, gutter: '100%'}); },
+                    'bar_grouped': function(values) { return raphael.g.barchart_paths(0,0,width,height,values, {barwidth: 40, gutter: '100%', to: 70, stretch: false}); },
+                    'bar_stacked': function(values) { return raphael.g.barchart_paths(0,0,width,height,values, {stacked: true, barwidth: 40, gutter: '100%', to: 70, stretch: false}); },
                 };
 
 
@@ -100,13 +100,14 @@ function AG(datasets, labels) {
         var matching_elements = [];
         for(var j=0;j<elements.length;j++) {
             var element = elements[j];
-            var key = element.key;
+            var ekey = element.key;
             for(var k=0;k<labels.length;k++) {
                 var label = labels[k];
-                if(key[label] && key[label] == key[label]) {
-                    if(k==labels.length-1) {
-                        matching_elements.push(element);
-                    }
+                if(!ekey[label] || ekey[label] != key[label]) {
+                    break;
+                }
+                if(k==(labels.length-1)) {
+                    matching_elements.push(element);
                 }
             }
         }
