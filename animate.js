@@ -1,13 +1,19 @@
-/*
+/**
+ * <pAnimatedGraphs:</p>
  *
- * AnimatedGraphs:
- * datasets = array of objects, e.g. [{male: {asian: 1, african: 2}, female: {asian: 3, african: 2}}]
- * labels = labels for objects, e.g. ['gender', 'ethnicity']
+ * <p>graphs & animations between them.</p>
+ * <p>wraps raphael.js</p>
  *
+ *
+ * <pre>datasets = array of objects, e.g. [{male: {asian: 1, african: 2}, female: {asian: 3, african: 2}}]</pre>
+ * <pre>labels = labels for objects, e.g. ['gender', 'ethnicity']</pre>
+ *
+ *
+ * @class
  */
-
-function AG(datasets, labels) {
-    var self = this;
+function AG(/** [{…key:value…}] */ datasets, /** [String] */ labels) {
+    
+    var self /** @lends AG# */  = this;
 
     self.datasets = datasets;
     self.datasets_raw = [];
@@ -27,14 +33,18 @@ function AG(datasets, labels) {
 
 
     self.chart_functions =  {
-                    'bar_grouped': function(values) { return raphael.g.barchart_paths(0,0,width,height,values); },
+                    'bar': function(values) { return raphael.g.barchart_paths(0,0,width,height,values); },
+                    'bar_grouped': function(values) { return raphael.g.barchart_paths(0,0,width,height,values, {barwidth: 40, gutter: '100%', to: 70, stretch: false}); },
+                    'bar_stacked': function(values) { return raphael.g.barchart_paths(0,0,width,height,values, {stacked: true, barwidth: 40, gutter: '100%', to: 70, stretch: false}); },
                 };
 
 
-    /* 
-     * switch dataset
+    /**
+     * switch dataset to index. need to call .chart() to take effect!
+     * @memberOf AG#
+     * @public
      */
-    self.set_dataset = function(id) {
+    self.set_dataset = function(/** int */ id) /** void */{
         self.dataset = self.datasets[id];
         self.dataset_raw = self.datasets_raw[id];
     };
@@ -43,12 +53,21 @@ function AG(datasets, labels) {
      * annotate
      * prepend object keys in datasets with their respective labels
      * (for unique identification later on)
+     * @function
+     */
+    /** @memberOf AG#
+     * @name annotate_datasets
+     * @private
      */
     self.annotate_datasets = function() {
         for(var i=0;i<self.datasets.length;i++) {
             self.annotate_dataset(self.datasets[i]);
         }
     };
+    /** @memberOf AG#
+     *  @name annotate_dataset
+     *  @private
+     */
     self.annotate_dataset = function(dataset) {
         var annotate = function(input, level) {
             for(var k in input) {
@@ -67,15 +86,27 @@ function AG(datasets, labels) {
      * basically denormalize datasets in this.datasets_raw
      * enables easier filtering and transformations later on
      */
+    /** @memberOf AG#
+     *  @name summarize_datasets
+     *  @private
+     */
     self.summarize_datasets = function() {
         for(var i=0;i<self.datasets.length;i++) {
             self.summarize_dataset(i);
         }
     };
+    /** @memberOf AG#
+     *  @name summarize_dataset
+     *  @private
+     */
     self.summarize_dataset = function(dataset_index) {
         var dataset = self.datasets[dataset_index];
         self.datasets_raw.push(self.summarize_dataset_recurse(dataset, [],0));
     };
+    /** @memberOf AG#
+     *  @name summarize_dataset_recurse
+     *  @private
+     */
     self.summarize_dataset_recurse = function(obj, current_key, depth) {
         var result = {};
         if(Raphael.is(obj, 'object')) {
@@ -94,6 +125,27 @@ function AG(datasets, labels) {
         }
     };
 
+    /** @memberOf AG#
+     *  @name match_elements
+     *  @private
+     */
+    self.match_elements = function(key, labels, elements) {
+        var matching_elements = [];
+        for(var j=0;j<elements.length;j++) {
+            var element = elements[j];
+            var ekey = element.key;
+            for(var k=0;k<labels.length;k++) {
+                var label = labels[k];
+                if(!ekey[label] || ekey[label] != key[label]) {
+                    break;
+                }
+                if(k==(labels.length-1)) {
+                    matching_elements.push(element);
+                }
+            }
+        }
+        return matching_elements;
+    };
 
     /*
      * draw/change chart
@@ -103,7 +155,13 @@ function AG(datasets, labels) {
      * or
      * chart('bar-grouped', ['gender', 'ethnicity'])
      */
-    self.chart = function(chart_type, labels) {
+     /**
+     *  The workhorse. Draw (with animation from a current chart, if valid) a chart using the current dataset
+      * @methodOf AG#
+     *  @public
+     *
+     */
+    self.chart = function(/** String */ chart_type, /** [String] */labels) /** void */ {
         var old_chart_type = self.current_chart_type;
         var old_elements = self.current_elements;
         self.current_elements = [];
@@ -113,31 +171,26 @@ function AG(datasets, labels) {
         var chart_function = self.chart_functions[chart_type];
 
         var g = chart_function(data);
+        var max_zindex=0;
+        g.elements = flatten(g.elements);
         if(old_elements) {
             for(var i=0;i<g.elements.length;i++) {
                 var element = g.elements[i];
-                var matching_elements = [];
-                for(var j=0;j<old_elements.length;j++) {
-                    var old_element = old_elements[j];
-                    var key = old_element.key;
-                    for(var k=0;k<labels.length;k++) {
-                        var label = labels[k];
-                        if(key[label] && key[label] == element.key[label]) {
-                            matching_elements.push(old_element);
-                        }
-                    }
-                }
+                var matching_elements = self.match_elements(element.key, labels, old_elements);
                 if(matching_elements.length>0) {
                     element.raphael_element = matching_elements[0].raphael_element;
                     var ndx = old_elements.indexOf(matching_elements[0]);
-                    if(ndx>=0)
+                    if(ndx>=0) {
                         old_elements.splice(ndx,1);
+                    } else {}
                 } else {
                     element.raphael_element = raphael.path(element.path);
                 }
                 element.raphael_element.animate({'path': element.path}, 1024);
-                element.raphael_element.attr(element.attr);
+                //element.raphael_element.attr(element.attr);
                 self.current_elements.push(element);
+                if(element.zindex && max_zindex<element.zindex)
+                    max_zindex = element.zindex;
             }
             for(var i=0;i<old_elements.length;i++) {
                 old_elements[i].raphael_element.remove();
@@ -146,19 +199,29 @@ function AG(datasets, labels) {
             for(var i=0;i<g.elements.length;i++) {
                 g.elements[i].raphael_element = raphael.path(g.elements[i].path);
                 g.elements[i].raphael_element.attr(g.elements[i].attr);
+                if(g.elements[i].zindex && max_zindex<g.elements[i].zindex) {
+                    max_zindex = g.elements[i].zindex;
+                }
                 self.current_elements.push(g.elements[i]);
             }
             self.current_chart_type = chart_type;
+        }
+        for(var zi=max_zindex-1;zi>=0;zi--) {
+            var es = self.current_elements.filter(function(x) {return x.zindex==zi;});
+            for(var i=0;i<es.length;i++) {
+                es[i].raphael_element.toFront();
+            }
         }
     };
 
 
 
-    /*
-     * get_data
+    /** @methodOf AG#
+     *  @name get_data
+     *  @private
      * get data formatted for g.raphael-like input
      */
-    self.get_data = function(labels) {
+    self.get_data = function(/** [String] */ labels) /** [{key:, value:}] */{
         var dataset = self.dataset_raw;
         var raw_values = [];
         var lbls = labels;
@@ -181,6 +244,10 @@ function AG(datasets, labels) {
             }
         }
 
+        /**
+         * @inner
+         * @ignore
+         */
         var recurse = function(values, index, labels, label_values) {
             var result = [];
             for(var i=0;i<label_values[index].length;i++) {
@@ -217,9 +284,7 @@ function AG(datasets, labels) {
 }
 
 
-//var ag = new AG({}, []);
-//
-//e.bind('click', ag.chart);
+/** @ignore */
 Object.prototype.clone = function() {
   var newObj = (this instanceof Array) ? [] : {};
   for (i in this) {
@@ -230,6 +295,7 @@ Object.prototype.clone = function() {
   } return newObj;
 };
 
+/** @ignore */
 Object.prototype.jsonproper = function() {
     var keys = [];
     for(var key in this) {
@@ -244,5 +310,15 @@ Object.prototype.jsonproper = function() {
     }
     return JSON.stringify(result);
 };
+/** @ignore */
 Object.prototype.merge = (function (ob) {var o = this;var i = 0;for (var z in ob) {if (ob.hasOwnProperty(z)) {o[z] = ob[z];}}return o;})
 
+/** @ignore */
+function flatten(array){
+    var flat = [];
+    for (var i = 0, l = array.length; i < l; i++){
+        var type = Object.prototype.toString.call(array[i]).split(' ').pop().split(']').shift().toLowerCase();
+        if (type) { flat = flat.concat(/^(array|collection|arguments)$/.test(type) ? flatten(array[i]) : array[i]); }
+    }
+    return flat;
+}

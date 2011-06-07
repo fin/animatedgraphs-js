@@ -32,23 +32,17 @@ Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
             for (var i = len; i--;) {
                 var tot = 0;
                 for (var j = values.length; j--;) {
-                    tot +=+ values[j][i].value || 0;
+                    if(values[j].length>i)
+                        tot += values[j][i].value || 0;
                 }
                 stacktotal.push(tot);
             }
         }
-        for (var i = values.length; i--;) {
-            if (values[i].length < len) {
-                for (var j = len; j--;) {
-                    values[i].push(0);
-                }
-            }
-        }
         total = Math.max.apply(Math, opts.stacked ? stacktotal : total);
     }
-    
+
     total = (opts.to) || total;
-    var barwidth = width / (len * (100 + gutter) + gutter) * 100,
+    var barwidth = opts['barwidth'] || (width / (len * (100 + gutter) + gutter) * 100),
         barhgutter = barwidth * gutter / 100,
         barvgutter = opts.vgutter == null ? 20 : opts.vgutter,
         stack = [],
@@ -62,13 +56,16 @@ Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
     for (var i = 0; i < len; i++) {
         stack = [];
         for (var j = 0; j < (multi || 1); j++) {
+            if(multi && values[j].length<=i)
+                continue;
             var h = Math.round((multi ? values[j][i].value : values[i].value) * Y),
                 top = y + height - barvgutter - h,
                 bar = {
                         obj: raphael.rectpath(Math.round(X + barwidth / 2), top + h/2, barwidth, h),
                         path: raphael.rectpath(Math.round(X + barwidth / 2), top + h/2, barwidth, h),
                         key: multi?values[j][i].key : values[i].key,
-                        attr: {stroke: "none", fill: colors[multi ? j : i]}
+                        attr: {stroke: "none", fill: colors[multi ? j : i]},
+                        value: multi ? values[j][i].value : values[i].value,
                     };
             if (multi) {
                 bars[j].push(bar);
@@ -79,6 +76,7 @@ Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
             bar.x = Math.round(X + barwidth / 2);
             bar.w = barwidth;
             bar.h = h;
+            bar.zindex = bar.value;
             bar.value = multi ? values[j][i].value : values[i].value;
             if (!opts.stacked) {
                 X += barwidth;
@@ -88,29 +86,23 @@ Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
         }
         if (opts.stacked) {
             var cvr;
-            covers2.push(cvr = {'obj': this.rectpath(stack[0].x - stack[0].w / 2, y - height/2, barwidth, height),
-                                'path': this.rectpath(stack[0].x - stack[0].w / 2, y - height/2, barwidth, height),
+            covers2.push(cvr = {'obj': this.rectpath(stack[0].x - stack[0].w / 2, y - height/2, barwidth, h),
+                                'path': this.rectpath(stack[0].x - stack[0].w / 2, y - height/2, barwidth, h),
                                 'attr': this.g.shim});
             cvr.bars = this.set();
             var size = 0;
-            for (var s = stack.length; s--;) {
-                //stack[s].toFront();
-            }
             for (var s = 0, ss = stack.length; s < ss; s++) {
                 var bar = stack[s],
                     cover,
                     h = (size + bar.value) * Y,
                     path = raphael.rectpath(bar.x, y + height - barvgutter - !!size * .5 - h/2, barwidth, h);
                 cvr.bars.push(bar);
-                console.log(size);
-                console.log(bar);
                 size && (bar.attributes = ({path: path}));
-                console.log(bar);
                 bar.h = h;
                 bar.y = y + height - barvgutter - !!size * .5 - h;
-                //covers.push(cover = this.rect(bar.x - bar.w / 2, bar.y, barwidth, bar.value * Y).attr(this.g.shim));
-                //cover.bar = bar;
-                //cover.value = bar.value;
+                covers.push(cover = this.rect(bar.x - bar.w / 2, bar.y, barwidth, bar.value * Y).attr(this.g.shim));
+                cover.bar = bar;
+                cover.value = bar.value;
                 size += bar.value;
             }
             X += barwidth;

@@ -19,7 +19,7 @@
                              'female': {'black': 5, 'white': 10, 'asian': 2, 'hispanic': 2}
                             },
                             {'male': {'black': 16, 'white': 15, 'asian': 5},
-                             'female': {'black': 50, 'white': 10, 'asian': 2, 'hispanic': 2}
+                             'female': {'black': 50, 'white': 10, 'asian': 2, 'hispanic': 1}
                             }
                         ]
             };
@@ -32,8 +32,11 @@
             var dsid = 1;
 
             refresh = function() {
-                a.set_dataset(dsid);
-                a.chart('bar_grouped', ['ethnicity']);
+                //a.set_dataset(dsid);
+                if(dsid==0)
+                    a.chart('bar_grouped', ['gender', 'ethnicity']);
+                else
+                    a.chart('bar_stacked', ['ethnicity','gender']);
                 dsid = 1-dsid;
                 setTimeout(refresh, 4096);
             }
