@@ -37,6 +37,7 @@ Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
                 stacktotal.push(tot);
             }
         }
+        /*
         for (var i = values.length; i--;) {
             if (values[i].length < len) {
                 for (var j = len; j--;) {
@@ -44,6 +45,7 @@ Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
                 }
             }
         }
+        */
         total = Math.max.apply(Math, opts.stacked ? stacktotal : total);
     }
     
@@ -62,6 +64,8 @@ Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
     for (var i = 0; i < len; i++) {
         stack = [];
         for (var j = 0; j < (multi || 1); j++) {
+            if(multi && values[j].length<=i)
+                continue;
             var h = Math.round((multi ? values[j][i].value : values[i].value) * Y),
                 top = y + height - barvgutter - h,
                 bar = {

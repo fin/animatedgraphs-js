@@ -113,6 +113,9 @@ function AG(datasets, labels) {
         var chart_function = self.chart_functions[chart_type];
 
         var g = chart_function(data);
+        console.log(g.elements);
+        g.elements = flatten(g.elements);
+        console.log(g.elements);
         if(old_elements) {
             for(var i=0;i<g.elements.length;i++) {
                 var element = g.elements[i];
@@ -246,3 +249,11 @@ Object.prototype.jsonproper = function() {
 };
 Object.prototype.merge = (function (ob) {var o = this;var i = 0;for (var z in ob) {if (ob.hasOwnProperty(z)) {o[z] = ob[z];}}return o;})
 
+function flatten(array){
+    var flat = [];
+    for (var i = 0, l = array.length; i < l; i++){
+        var type = Object.prototype.toString.call(array[i]).split(' ').pop().split(']').shift().toLowerCase();
+        if (type) { flat = flat.concat(/^(array|collection|arguments)$/.test(type) ? flatten(array[i]) : array[i]); }
+    }
+    return flat;
+}
