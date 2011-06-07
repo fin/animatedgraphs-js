@@ -27,7 +27,9 @@ function AG(datasets, labels) {
 
 
     self.chart_functions =  {
+                    'bar': function(values) { return raphael.g.barchart_paths(0,0,width,height,values); },
                     'bar_grouped': function(values) { return raphael.g.barchart_paths(0,0,width,height,values); },
+                    'bar_stacked': function(values) { return raphael.g.barchart_paths(0,0,width,height,values, {stacked: true}); },
                 };
 
 

@@ -32,7 +32,8 @@ Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
             for (var i = len; i--;) {
                 var tot = 0;
                 for (var j = values.length; j--;) {
-                    tot +=+ values[j][i].value || 0;
+                    if(values[j].length>i)
+                        tot +=+ values[j][i].value || 0;
                 }
                 stacktotal.push(tot);
             }

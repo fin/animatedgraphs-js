@@ -34,9 +34,9 @@
             refresh = function() {
                 a.set_dataset(dsid);
                 if(dsid==0)
-                    a.chart('bar_grouped', ['ethnicity']);
-                else
                     a.chart('bar_grouped', ['gender', 'ethnicity']);
+                else
+                    a.chart('bar_stacked', ['ethnicity','gender']);
                 dsid = 1-dsid;
                 setTimeout(refresh, 4096);
             }
