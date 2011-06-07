@@ -26,7 +26,7 @@ function AG(/** [{…key:value…}] */ datasets, /** [String] */ labels) {
     self.size_x = 400;
     self.size_y = 400;
 
-    self.raphael = new Raphael();
+    self.raphael = new Raphael("testcanvas");
     var raphael = self.raphael;
     var width = raphael.width;
     var height = raphael.height;
