@@ -106,10 +106,7 @@ Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
                     h = (size + bar.value) * Y,
                     path = raphael.rectpath(bar.x, y + height - barvgutter - !!size * .5 - h/2, barwidth, h);
                 cvr.bars.push(bar);
-                console.log(size);
-                console.log(bar);
                 size && (bar.attributes = ({path: path}));
-                console.log(bar);
                 bar.h = h;
                 bar.y = y + height - barvgutter - !!size * .5 - h;
                 //covers.push(cover = this.rect(bar.x - bar.w / 2, bar.y, barwidth, bar.value * Y).attr(this.g.shim));

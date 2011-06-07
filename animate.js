@@ -113,9 +113,7 @@ function AG(datasets, labels) {
         var chart_function = self.chart_functions[chart_type];
 
         var g = chart_function(data);
-        console.log(g.elements);
         g.elements = flatten(g.elements);
-        console.log(g.elements);
         if(old_elements) {
             for(var i=0;i<g.elements.length;i++) {
                 var element = g.elements[i];
