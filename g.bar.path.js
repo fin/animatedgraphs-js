@@ -51,7 +51,7 @@ Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
     }
     
     total = (opts.to) || total;
-    var barwidth = width / (len * (100 + gutter) + gutter) * 100,
+    var barwidth = opts['barwidth'] || (width / (len * (100 + gutter) + gutter) * 100),
         barhgutter = barwidth * gutter / 100,
         barvgutter = opts.vgutter == null ? 20 : opts.vgutter,
         stack = [],
@@ -99,7 +99,7 @@ Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
             cvr.bars = this.set();
             var size = 0;
             for (var s = stack.length; s--;) {
-                //stack[s].toFront();
+                stack[s].zindex=s;
             }
             for (var s = 0, ss = stack.length; s < ss; s++) {
                 var bar = stack[s],

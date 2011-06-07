@@ -28,8 +28,8 @@ function AG(datasets, labels) {
 
     self.chart_functions =  {
                     'bar': function(values) { return raphael.g.barchart_paths(0,0,width,height,values); },
-                    'bar_grouped': function(values) { return raphael.g.barchart_paths(0,0,width,height,values); },
-                    'bar_stacked': function(values) { return raphael.g.barchart_paths(0,0,width,height,values, {stacked: true}); },
+                    'bar_grouped': function(values) { return raphael.g.barchart_paths(0,0,width,height,values, {barwidth: 40, gutter: '100%'}); },
+                    'bar_stacked': function(values) { return raphael.g.barchart_paths(0,0,width,height,values, {stacked: true, barwidth: 40, gutter: '100%'}); },
                 };
 
 
@@ -115,6 +115,7 @@ function AG(datasets, labels) {
         var chart_function = self.chart_functions[chart_type];
 
         var g = chart_function(data);
+        var max_zindex=0;
         g.elements = flatten(g.elements);
         if(old_elements) {
             for(var i=0;i<g.elements.length;i++) {
@@ -139,8 +140,10 @@ function AG(datasets, labels) {
                     element.raphael_element = raphael.path(element.path);
                 }
                 element.raphael_element.animate({'path': element.path}, 1024);
-                element.raphael_element.attr(element.attr);
+                //element.raphael_element.attr(element.attr);
                 self.current_elements.push(element);
+                if(element.zindex && max_zindex<element.zindex)
+                    max_zindex = element.zindex;
             }
             for(var i=0;i<old_elements.length;i++) {
                 old_elements[i].raphael_element.remove();
@@ -149,9 +152,17 @@ function AG(datasets, labels) {
             for(var i=0;i<g.elements.length;i++) {
                 g.elements[i].raphael_element = raphael.path(g.elements[i].path);
                 g.elements[i].raphael_element.attr(g.elements[i].attr);
+                if(g.elements[i].zindex && max_zindex<g.elements[i].zindex)
+                    max_zindex = g.elements[i].zindex;
                 self.current_elements.push(g.elements[i]);
             }
             self.current_chart_type = chart_type;
+        }
+        for(var zi=0;zi<max_zindex;zi++) {
+            var es = self.current_elements.filter(function(x) {return x.zindex==zi;});
+            for(var i=0;i<es.length;i++) {
+                es[i].raphael_element.toFront();
+            }
         }
     };
 
