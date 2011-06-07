@@ -1,0 +1,50 @@
+<html>
+    <head>
+        <title>Animated Graphs: Documentation</title>
+    </head>
+    <body>
+        <h1>Animated Graphs</h1>
+        <p>Stephan Zapotocky 0426209</p>
+        <p>Markus Hametner 0725416</p>
+        <p><a href="docs/index.html">API documentation</a></p>
+
+        <hr />
+        <p>A library allowing transitions between graphs in javascript, using <a href="http://raphaeljs.com">raphael.js</a> as a drawing backend</p>
+        <br />
+        <p>Features</p>
+        <ul>
+            <li>Bar chart drawing</li>
+            <li>Bar chart animated data changes</li>
+            <li>Bar chart linearly animated pivots</li>
+        </ul>
+        <p>Missing features</p>
+        <ul>
+            <li>Pie &amp; Ring charts</li>
+            <li>Staged animations: framework intact; needs proper implementation</li>
+            <li>Element splitting&amp;merging for more complicated pivots</li>
+        </ul>
+
+        <p>Usage</p>
+        <pre>
+              data = {'levels': ['gender','ethnicity'],
+                     'data':// upper layer: datasets
+                        [
+                            {'male': {'black': 10, 'white': 15, 'asian': 5},
+                             'female': {'black': 5, 'white': 10, 'asian': 2, 'hispanic': 2}
+                            },
+                            {'male': {'black': 16, 'white': 15, 'asian': 5},
+                             'female': {'black': 50, 'white': 10, 'asian': 2, 'hispanic': 2}
+                            }
+                        ]
+              };
+
+
+              a = new AG(data.data, data.levels);
+              
+              //repeat:
+              a.chart('bar_grouped', [data.levels[1]]);
+              //if neccessary:
+              // a.set_dataset(id);
+        </pre>
+    </body>
+</html>
