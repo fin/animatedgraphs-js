@@ -6,8 +6,10 @@
  *
  */
 
+/** @class */
 function AG(datasets, labels) {
-    var self = this;
+    
+    var self /** @lends AG# */  = this;
 
     self.datasets = datasets;
     self.datasets_raw = [];
@@ -45,12 +47,15 @@ function AG(datasets, labels) {
      * annotate
      * prepend object keys in datasets with their respective labels
      * (for unique identification later on)
+     * @function
      */
+    /** @memberOf AG*/
     self.annotate_datasets = function() {
         for(var i=0;i<self.datasets.length;i++) {
             self.annotate_dataset(self.datasets[i]);
         }
     };
+    /** @memberOf AG*/
     self.annotate_dataset = function(dataset) {
         var annotate = function(input, level) {
             for(var k in input) {
@@ -69,15 +74,18 @@ function AG(datasets, labels) {
      * basically denormalize datasets in this.datasets_raw
      * enables easier filtering and transformations later on
      */
+    /** @memberOf AG*/
     self.summarize_datasets = function() {
         for(var i=0;i<self.datasets.length;i++) {
             self.summarize_dataset(i);
         }
     };
+    /** @memberOf AG*/
     self.summarize_dataset = function(dataset_index) {
         var dataset = self.datasets[dataset_index];
         self.datasets_raw.push(self.summarize_dataset_recurse(dataset, [],0));
     };
+    /** @memberOf AG*/
     self.summarize_dataset_recurse = function(obj, current_key, depth) {
         var result = {};
         if(Raphael.is(obj, 'object')) {
@@ -96,6 +104,7 @@ function AG(datasets, labels) {
         }
     };
 
+    /** @memberOf AG*/
     self.match_elements = function(key, labels, elements) {
         var matching_elements = [];
         for(var j=0;j<elements.length;j++) {
@@ -122,6 +131,7 @@ function AG(datasets, labels) {
      * or
      * chart('bar-grouped', ['gender', 'ethnicity'])
      */
+    /** @memberOf AG*/
     self.chart = function(chart_type, labels) {
         var old_chart_type = self.current_chart_type;
         var old_elements = self.current_elements;
@@ -181,6 +191,7 @@ function AG(datasets, labels) {
      * get_data
      * get data formatted for g.raphael-like input
      */
+    /** @memberOf AG*/
     self.get_data = function(labels) {
         var dataset = self.dataset_raw;
         var raw_values = [];
