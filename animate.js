@@ -6,8 +6,12 @@
  *
  */
 
-/** @class */
-function AG(datasets, labels) {
+/** @class
+ *
+ *
+ *
+ */
+function AG(/** [{…key:value…}] */ datasets, /** [String] */ labels) {
     
     var self /** @lends AG# */  = this;
 
@@ -38,6 +42,10 @@ function AG(datasets, labels) {
     /* 
      * switch dataset
      */
+    /** @memberOf AG#
+     * @name AG#set_dataset
+     * @public
+     */
     self.set_dataset = function(id) {
         self.dataset = self.datasets[id];
         self.dataset_raw = self.datasets_raw[id];
@@ -49,13 +57,19 @@ function AG(datasets, labels) {
      * (for unique identification later on)
      * @function
      */
-    /** @memberOf AG*/
+    /** @memberOf AG#
+     * @name annotate_datasets
+     * @private
+     */
     self.annotate_datasets = function() {
         for(var i=0;i<self.datasets.length;i++) {
             self.annotate_dataset(self.datasets[i]);
         }
     };
-    /** @memberOf AG*/
+    /** @memberOf AG#
+     *  @name annotate_dataset
+     *  @private
+     */
     self.annotate_dataset = function(dataset) {
         var annotate = function(input, level) {
             for(var k in input) {
@@ -74,18 +88,27 @@ function AG(datasets, labels) {
      * basically denormalize datasets in this.datasets_raw
      * enables easier filtering and transformations later on
      */
-    /** @memberOf AG*/
+    /** @memberOf AG#
+     *  @name summarize_datasets
+     *  @private
+     */
     self.summarize_datasets = function() {
         for(var i=0;i<self.datasets.length;i++) {
             self.summarize_dataset(i);
         }
     };
-    /** @memberOf AG*/
+    /** @memberOf AG#
+     *  @name summarize_dataset
+     *  @private
+     */
     self.summarize_dataset = function(dataset_index) {
         var dataset = self.datasets[dataset_index];
         self.datasets_raw.push(self.summarize_dataset_recurse(dataset, [],0));
     };
-    /** @memberOf AG*/
+    /** @memberOf AG#
+     *  @name summarize_dataset_recurse
+     *  @private
+     */
     self.summarize_dataset_recurse = function(obj, current_key, depth) {
         var result = {};
         if(Raphael.is(obj, 'object')) {
@@ -104,7 +127,10 @@ function AG(datasets, labels) {
         }
     };
 
-    /** @memberOf AG*/
+    /** @memberOf AG#
+     *  @name match_elements
+     *  @private
+     */
     self.match_elements = function(key, labels, elements) {
         var matching_elements = [];
         for(var j=0;j<elements.length;j++) {
@@ -131,8 +157,13 @@ function AG(datasets, labels) {
      * or
      * chart('bar-grouped', ['gender', 'ethnicity'])
      */
-    /** @memberOf AG*/
-    self.chart = function(chart_type, labels) {
+    /** @memberOf AG#
+     *  @name chart
+     *  @public
+     *
+     *  The workhorse. Draw (with animation from a current chart, if valid) a chart using the current dataset
+     */
+    self.chart = function(/** String */ chart_type, /** [String] */labels) /** void */ {
         var old_chart_type = self.current_chart_type;
         var old_elements = self.current_elements;
         self.current_elements = [];
@@ -187,12 +218,12 @@ function AG(datasets, labels) {
 
 
 
-    /*
-     * get_data
+    /** @methodOf AG#
+     *  @name get_data
+     *  @private
      * get data formatted for g.raphael-like input
      */
-    /** @memberOf AG*/
-    self.get_data = function(labels) {
+    self.get_data = function(/** [String] */ labels) /** [{key:, value:}] */{
         var dataset = self.dataset_raw;
         var raw_values = [];
         var lbls = labels;
@@ -215,6 +246,10 @@ function AG(datasets, labels) {
             }
         }
 
+        /**
+         * @inner
+         * @ignore
+         */
         var recurse = function(values, index, labels, label_values) {
             var result = [];
             for(var i=0;i<label_values[index].length;i++) {
@@ -251,9 +286,7 @@ function AG(datasets, labels) {
 }
 
 
-//var ag = new AG({}, []);
-//
-//e.bind('click', ag.chart);
+/** @ignore */
 Object.prototype.clone = function() {
   var newObj = (this instanceof Array) ? [] : {};
   for (i in this) {
@@ -264,6 +297,7 @@ Object.prototype.clone = function() {
   } return newObj;
 };
 
+/** @ignore */
 Object.prototype.jsonproper = function() {
     var keys = [];
     for(var key in this) {
@@ -278,8 +312,10 @@ Object.prototype.jsonproper = function() {
     }
     return JSON.stringify(result);
 };
+/** @ignore */
 Object.prototype.merge = (function (ob) {var o = this;var i = 0;for (var z in ob) {if (ob.hasOwnProperty(z)) {o[z] = ob[z];}}return o;})
 
+/** @ignore */
 function flatten(array){
     var flat = [];
     for (var i = 0, l = array.length; i < l; i++){
