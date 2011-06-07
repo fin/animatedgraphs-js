@@ -11,7 +11,7 @@
 	         #outercontainer {position:absolute; width:100%; height:100%}
 	         #testcanvas {background-image:url(background.png); position:absolute;
                         width:650px; height:420px ;top:50%; left:50%;
-                        margin-top:-210px ; margin-left:-325px}
+                        margin-top:-200px ; margin-left:-325px}
            #title {position:relative; left:50%; width:650px; margin-left:-325px; height:20px; margin-top:-10px}
         </style>
     </head>
@@ -21,16 +21,53 @@
           <div id="testcanvas">            
           </div>
           <div id="title">
-              <p><h2>Animated Transitions Javascript Demo</h2></p>
-            </div>          
+            <p><h2>Animated Graph Transitions With Javascript</h2></p>            
+            <div id="controls">
+                <form name="controls">
+                <input type=radio name="punkte" value="erstens" onClick="selectDataset()">
+                Dataset 1: Gender / Ethnicity<br>
+                <input type=radio name="punkte" value="zweitens" onClick="selectDataset()">
+                Dataset 2: iOS Devices / OS Version<br>
+                </form>
+             </div> 
+             <div id="buttons">
+               <form name="buttons">
+                 <input type=button name="Text 2" value="Animate!" onClick="animate()">
+               </form>
+            </div> 
+          </div>      
         </div>
     </body>
     <p>
-        <script type="text/javascript">
-            raphael = new Raphael("testcanvas", 650, 420);
+    <script type="text/javascript">
+        
+        var data;       
+        raphael = new Raphael("testcanvas", 650, 420);
+        var a;
+        var dsid = 1;
 
-            data = {'levels': ['gender','ethnicity'],
-                    'data':// upper layer: datasets
+        /*
+        * animate the graph
+        */        
+        function animate()
+        {
+            a.set_dataset(dsid);
+            a.chart('bar_grouped', [data.levels[1]]);
+            dsid = 1-dsid;
+            //setTimeout(refresh, 2096);
+        }    
+
+        /*
+        * select a dataset from the radio buttons and fill variables
+        */            
+        function selectDataset()
+        {
+          raphael.clear();
+
+          if(document.controls.elements[0].checked)
+          {
+              data = {'levels': ['gender','ethnicity'],
+                     'data':// upper layer: datasets
                         [
                             {'male': {'black': 10, 'white': 15, 'asian': 5},
                              'female': {'black': 5, 'white': 10, 'asian': 2, 'hispanic': 2}
@@ -39,23 +76,29 @@
                              'female': {'black': 50, 'white': 10, 'asian': 2, 'hispanic': 2}
                             }
                         ]
-            };
+              };
+          }
+          else if(document.controls.elements[1].checked)
+          {
+              data = {'levels': ['device','ios-version'],
+                     'data':// upper layer: datasets
+                        [
+                            {'iphone': {'5.x': 2, '4.x': 30, '3.x': 20, '2.x': 2, '1.x': 1},
+                             'ipod touch': {'5.x': 2, '4.x': 20, '3.x': 15, '2.x': 4, '1.x': 2},
+                             'ipad': {'5.x': 3, '4.x': 25, '3.x': 15}
+                            },
+                            {'iphone': {'5.x': 22, '4.x': 10, '3.x': 21, '2.x': 1, '1.x': 1},
+                             'ipod touch': {'5.x': 12, '4.x': 17, '3.x': 10, '2.x': 3, '1.x': 1},
+                             'ipad': {'5.x': 23, '4.x': 15, '3.x': 5}
+                            }
+                        ]
+              }; 
+          }
 
-
-            a = new AG(data.data, data.levels);
-
-
-
-            var dsid = 1;
-
-            refresh = function() {
-                a.set_dataset(dsid);
-                a.chart('pie_grouped', ['ethnicity']);
-                dsid = 1-dsid;
-                setTimeout(refresh, 2096);
-            }
-
-            refresh();
+          a = new AG(data.data, data.levels);
+          dsid = 1;
+          animate(); //show the graph
+        }  
         </script>
         </p>
 </html>
