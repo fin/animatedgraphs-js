@@ -33,9 +33,9 @@ function AG(/** [{…key:value…}] */ datasets, /** [String] */ labels) {
 
 
     self.chart_functions =  {
-                    'bar': function(values) { return raphael.g.barchart_paths(0,0,width,height,values, {barwidth: 40, to: 70, stretch: false }); },
-                    'bar_grouped': function(values) { return raphael.g.barchart_paths(0,0,width,height,values, {barwidth: 40, gutter: '100%', to: 70, stretch: false}); },
-                    'bar_stacked': function(values) { return raphael.g.barchart_paths(0,0,width,height,values, {stacked: true, barwidth: 40, gutter: '100%', to: 70, stretch: false}); },
+                    'bar': function(values) { return raphael.g.barchart_paths(0,0,width,height,values, {barwidth: 40, stretch: false }); },
+                    'bar_grouped': function(values) { return raphael.g.barchart_paths(0,0,width,height,values, {barwidth: 40, gutter: '100%', stretch: false}); },
+                    'bar_stacked': function(values) { return raphael.g.barchart_paths(0,0,width,height,values, {stacked: true, barwidth: 40, gutter: '100%', stretch: false}); },
                 };
 
 
