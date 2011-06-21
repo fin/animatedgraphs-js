@@ -23,8 +23,8 @@ function AG(/** [{…key:value…}] */ datasets, /** [String] */ labels) {
     self.dataset_raw = null;
     self.current_chart_type = null;
     self.current_elements = null;
-    self.size_x = 400;
-    self.size_y = 400;
+    self.size_x = 700;
+    self.size_y = 450;
 
     self.raphael = new Raphael("testcanvas");
     var raphael = self.raphael;
@@ -36,6 +36,8 @@ function AG(/** [{…key:value…}] */ datasets, /** [String] */ labels) {
                     'bar': function(values) { return raphael.g.barchart_paths(0,0,width,height,values, {barwidth: 40, to: 70, stretch: false }); },
                     'bar_grouped': function(values) { return raphael.g.barchart_paths(0,0,width,height,values, {barwidth: 40, gutter: '100%', to: 70, stretch: false}); },
                     'bar_stacked': function(values) { return raphael.g.barchart_paths(0,0,width,height,values, {stacked: true, barwidth: 40, gutter: '100%', to: 70, stretch: false}); },
+                    'pie': function(values) { return raphael.g.ringchart_paths(0,0,width,height,values); },
+                    'pie_separate': function(values) { return raphael.g.ringchart_paths(0,0,width,height,values,{separate: true}); }
                 };
 
 
@@ -240,7 +242,10 @@ function AG(/** [{…key:value…}] */ datasets, /** [String] */ labels) {
                 if(label_values[i].indexOf(k)<0) {
                     label_values[i].push(k);
                 }
+                //k = k.substring(label.length+1);
+                //alert(k.substring(0));
                 raw_values.push({key: JSON.parse(key), value: dataset[key]});
+                //raw_values.push({key: k.substring(0), value: dataset[key]});
             }
         }
 
@@ -260,14 +265,17 @@ function AG(/** [{…key:value…}] */ datasets, /** [String] */ labels) {
                     if(fv.length>0) {
                         var s = 0;
                         var k = {};
+                        var rl = "";
                         for(var j=0;j<fv.length;j++) {
                             s+=fv[j].value;
                         }
                         for(var j=0;j<labels.length;j++) {
                             var l = labels[j];
+                            rl = l.length;
                             k[l] = fv[0].key[l];
                         }
-                        result.push({key: k, value: s});
+                        var re = k[l].substring(rl+1);
+                        result.push({key: k, label: re, value: s});
                     }
                 }
             }

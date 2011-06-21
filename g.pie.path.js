@@ -4,325 +4,11 @@
 * Copyright (c) 2009 Dmitry Baranovskiy (http://g.raphaeljs.com)
 * Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license.
 */
-Raphael.fn.g.piechart_paths = function (x, y, width, height, values, opts)
-{    
-    opts = opts || {};
-    var paper = this,
-        sectors = [],
-        covers = this.set(),
-        chart = this.set(),
-        series = this.set(),
-        order = [],
-        len = values.length,
-        angle = 0,
-        total = 0,
-        others = 0,
-        cut = 9,
-        defcut = true,
-        r = Math.max(width, height)/2.0,
-        cx = x+r*2,
-        cy = y+r*2;
-        
-           
-        
-    chart.covers = covers;  
- 
-    
-    if (len == 1)
-    {   
-        series.push(this.circle(cx, cy, r).attr({fill: this.g.colors[0], stroke: opts.stroke || "#fff", "stroke-width": opts.strokewidth == null ? 1 : opts.strokewidth}));
-        covers.push(this.circle(cx, cy, r).attr(this.g.shim));
-        total = values[0].value;
-        values[0] = {value: values[0], order: 0, valueOf: function () { return this.value; }};
-        series[0].middle = {x: cx, y: cy};
-        series[0].mangle = 180;
-    }
-    else
-    {
-        function sector(cx, cy, r, startAngle, endAngle, fill)
-        {
-            var rad = Math.PI / 180,
-                /*x1 = cx + r * Math.cos(-startAngle * rad),
-                x2 = cx + r * Math.cos(-endAngle * rad),
-                xm = cx + r / 2 * Math.cos(-(startAngle + (endAngle - startAngle) / 2) * rad),
-                y1 = cy + r * Math.sin(-startAngle * rad),
-                y2 = cy + r * Math.sin(-endAngle * rad),
-                ym = cy + r / 2 * Math.sin(-(startAngle + (endAngle - startAngle) / 2) * rad),
-                res = ["M", cx, cy, "L", x1, y1, "A", r, r, 0, +(Math.abs(endAngle - startAngle) > 180), 1, x2, y2, "z"];
-            res.middle = {x: xm, y: ym};  */
-            //return res;
-          //if(steps===undefined)
-            steps=1024;
- 
-            startAngle *= Math.PI/180; //convert deg to rad
-            endAngle *= Math.PI/180;
-          
-            var steps1 = Math.floor(parseInt(steps)/3); //steps for lines to tip
-            var steps2 = steps1 + parseInt(steps) % 3;  //steps for arc
-            var p1x = cx + r * Math.cos(startAngle);
-            var p1y = cy - r * Math.sin(startAngle);
-            var p2x = cx + r * Math.cos(endAngle);
-            var p2y = cy - r * Math.sin(endAngle);
-            var angdiff = endAngle - startAngle;
-      
-            //create path
-            var path = [];
-            path.push('M'+cx+' '+cy); //tip
-      
-            //path part 1: tip to arc starting point
-            var t1x = (p1x-cx)/steps1;
-            var t1y = (p1y-cy)/steps1; 
-            
-            for(var i=1; i<=steps1; i+=1)
-            {
-                path.push('L'+(cx+(t1x*i))+' '+(cy+(t1y*i)));
-            }
-          
-            //path part 2: arc
-            var tang = angdiff/steps2;
-            
-            for(var i=1; i<=steps2; i+=1)
-            {
-                path.push('L'+(cx+r*Math.cos(startAngle+i*tang)));
-                path.push(' '+(cy-r*Math.sin(startAngle+i*tang)));
-            }
-          
-            //path part 3: arc end point to tip
-            var t2x = (cx-p2x)/steps1;
-            var t2y = (cy-p2y)/steps1; 
-            
-            for(var i=1; i<steps1; i+=1)
-            {
-                path.push('L'+(p2x+(t2x*i))+' '+(p2y+(t2y*i)));
-            }
-      
-            //close path
-            path.push('Z');
-      
-            return path.join('');
-        }
-        //end of sector-function
-          
-        for (var i = 0; i < len; i++)
-        {
-            //alert(values[i].value);
-            total += values[i].value;
-            values[i].value = {value: values[i].value, order: i, valueOf: function () { return this.value; }};
-        }
-        
-        values.sort(function (a, b)
-        {
-            return b.value - a.value;
-        });
-        
-        for (i = 0; i < len; i++)
-        {
-            if (defcut && values[i].value * 360 / total <= 1.5)
-            {
-                cut = i;
-                defcut = false;
-            }
-            
-            if (i > cut) 
-            {
-                defcut = false;
-                values[cut].value += values[i].value;
-                values[cut].others = true;
-                others = values[cut].value;
-            }
-        }
-        
-        len = Math.min(cut + 1, values.length);
-        others && values.splice(len) && (values[cut].others = true);
-              
-        for (i = 0; i < len; i++)
-        {
-            var mangle = angle - 360 * values[i].value / total / 2;
-            if (!i)
-            {
-                angle = 90 - mangle;
-                mangle = angle - 360 * values[i].value / total / 2;
-            }
-            
-            if (opts.init)
-            {
-                var ipath = sector(cx, cy, 1, angle, angle - 360 * values[i].value / total).join(",");
-            }
-
-            var pathd = sector(cx, cy, r, angle, angle -= 360 * values[i].value / total);
-            //var p = this.path(opts.init ? ipath : path).attr({fill: opts.colors && opts.colors[i] || this.g.colors[i] || "#666", stroke: opts.stroke || "#fff", "stroke-width": (opts.strokewidth == null ? 1 : opts.strokewidth), "stroke-linejoin": "round"});
-            //var p = this.path(path);
-            //var hihi = this.path(path);
-            //p.attr({fill: opts.colors && opts.colors[i] || this.g.colors[i] || "#666", stroke: opts.stroke || "#fff", "stroke-width": (opts.strokewidth == null ? 1 : opts.strokewidth), "stroke-linejoin": "round"});
-            //p.value = values[i];
-            //p.middle = path.middle;
-            //p.mangle = mangle;
-            sectors.push(pathd);
-            series.push(pathd);
-            //opts.init && p.animate({path: path.join(",")}, (+opts.init - 1) || 1000, ">");
-        }
-      
-        
-        /*for (i = 0; i < len; i++)
-        {
-            p = paper.path(sectors[i].attr("path")).attr(this.g.shim);
-            opts.href && opts.href[i] && p.attr({href: opts.href[i]});
-            p.attr = function () {};
-            covers.push(p);
-            series.push(p);
-        }     */
-    }
-
-    chart.hover = function (fin, fout)
-    {
-        fout = fout || function () {};
-        var that = this;
-        
-        for (var i = 0; i < len; i++)
-        {
-            (function (sector, cover, j)
-            {
-                var o = {
-                    sector: sector,
-                    cover: cover,
-                    cx: cx,
-                    cy: cy,
-                    mx: sector.middle.x,
-                    my: sector.middle.y,
-                    mangle: sector.mangle,
-                    r: r,
-                    value: values[j],
-                    total: total,
-                    label: that.labels && that.labels[j]
-                };
-                
-                cover.mouseover(function ()
-                                {
-                                    fin.call(o);
-                                }).mouseout(function ()
-                                            {
-                                                fout.call(o);
-                                            });
-                                })(series[i], covers[i], i);
-        }
-        
-        return this;
-    };
-    
-    // x: where label could be put
-    // y: where label could be put
-    // value: value to show
-    // total: total number to count %
-    chart.each = function (f)
-    {
-        var that = this;
-        for (var i = 0; i < len; i++)
-        {
-            (function (sector, cover, j)
-             {
-                var o = {
-                    sector: sector,
-                    cover: cover,
-                    cx: cx,
-                    cy: cy,
-                    x: sector.middle.x,
-                    y: sector.middle.y,
-                    mangle: sector.mangle,
-                    r: r,
-                    value: values[j],
-                    total: total,
-                    label: that.labels && that.labels[j]
-                    };
-                    
-                f.call(o);
-            })(series[i], covers[i], i);
-        }
-        
-        return this;
-    };
-    
-    chart.click = function (f)
-    {
-        var that = this;
-        for (var i = 0; i < len; i++)
-        {
-            (function (sector, cover, j)
-            {
-                var o = {
-                    sector: sector,
-                    cover: cover,
-                    cx: cx,
-                    cy: cy,
-                    mx: sector.middle.x,
-                    my: sector.middle.y,
-                    mangle: sector.mangle,
-                    r: r,
-                    value: values[j],
-                    total: total,
-                    label: that.labels && that.labels[j]
-                    };
-                    
-                cover.click(function () { f.call(o); });
-            })(series[i], covers[i], i);
-        }
-        
-        return this;
-    };
-    
-    chart.inject = function (element)
-                   {
-                       element.insertBefore(covers[0]);
-                   };
-                   
-    var legend = function (labels, otherslabel, mark, dir)
-    {
-        var x = cx + r + r / 5,
-            y = cy,
-            h = y + 10;
-        labels = labels || [];
-        dir = (dir && dir.toLowerCase && dir.toLowerCase()) || "east";
-        mark = paper.g.markers[mark && mark.toLowerCase()] || "disc";
-        chart.labels = paper.set();
-        
-        for (var i = 0; i < len; i++)
-        {
-            var clr = series[i].attr("fill"),
-                j = values[i].order,
-                txt;
-            values[i].others && (labels[j] = otherslabel || "Others");
-            labels[j] = paper.g.labelise(labels[j], values[i], total);
-            chart.labels.push(paper.set());
-            chart.labels[i].push(paper.g[mark](x + 5, h, 5).attr({fill: clr, stroke: "none"}));
-            chart.labels[i].push(txt = paper.text(x + 20, h, labels[j] || values[j]).attr(paper.g.txtattr).attr({fill: opts.legendcolor || "#000", "text-anchor": "start"}));
-            covers[i].label = chart.labels[i];
-            h += txt.getBBox().height * 1.2;
-        }
-        
-        var bb = chart.labels.getBBox(),
-            tr = {
-                east: [0, -bb.height / 2],
-                west: [-bb.width - 2 * r - 20, -bb.height / 2],
-                north: [-r - bb.width / 2, -r - bb.height - 10],
-                south: [-r - bb.width / 2, r + 10]
-                 }[dir];
-        chart.labels.translate.apply(chart.labels, tr);
-        chart.push(chart.labels);
-    };
-    
-    if (opts.legend) 
-    {
-        legend(opts.legend, opts.legendothers, opts.legendmark, opts.legendpos);
-    }
-    
-    chart.push(series, covers);
-    chart.sectors = sectors;
-    chart.series = series;
-    chart.covers = covers;
-    return chart;
-};
 
 
-
+/*
+*  Draw a ringchart with given position, size, values and options.
+*/
 Raphael.fn.g.ringchart_paths = function (x, y, width, height, values, opts)
 {  
     opts = opts || {};
@@ -343,14 +29,14 @@ Raphael.fn.g.ringchart_paths = function (x, y, width, height, values, opts)
         r = Math.min(width, height)/2.0,
         radpart = r/2, //divided radius
         cx = x+width/2.0,
-        cy = y+height/2.0;
+        cy = y+height/2.0,
+        labelposx = [],
+        labelposy = [];
    chart.covers = covers;   
-             
     
-                
+  
     if (len == 1)
     {
-
         series.push(this.circle(cx, cy, r).attr({fill: this.g.colors[0], stroke: opts.stroke || "#fff", "stroke-width": opts.strokewidth == null ? 1 : opts.strokewidth}));
         covers.push(this.circle(cx, cy, r).attr(this.g.shim));
         total = values[0];
@@ -359,17 +45,17 @@ Raphael.fn.g.ringchart_paths = function (x, y, width, height, values, opts)
         series[0].mangle = 180;
     }
     else
-    {   
-    
-        function ringsector(x, y, rad1, rad2, ang1, ang2, steps)
+    {      
+        function ringsector(x, y, rad1, rad2, ang1, ang2)
         {
             /* draw an arc segment with given inner radius rad1 and outer radius rad2.
                start in the middle of the inner arc, go to angle1 (0° = east), 
                go to the outer arc, go ccw to angle2 and back to the inner arc. */
         
-            if(steps===undefined)
-                steps=1024;
+            var steps=128;
          
+            ang1 +=0.3;
+            ang2 -=0.3;
             ang1 *= Math.PI/180; //convert deg to rad
             ang2 *= Math.PI/180;
             
@@ -445,111 +131,121 @@ Raphael.fn.g.ringchart_paths = function (x, y, width, height, values, opts)
             return path.join('');
         }
         //end of ringsector-function
-        
-        
+                
+         
         for (var i = 0; i < len; i++)
         {
-            //alert(values[i].value);
-            total += values[i].value;
-            //values[i].value = {value: values[i].value, order: i, valueOf: function () { return this.value; }};
+            if(values[i].length==null)
+            {
+               total += values[i].value;
+            }
+            else
+            {
+              for (var j = 0; j < values[i].length; j++)
+              {
+                 total += values[i][j].value;
+              }
+            }
         }
         
-        values.sort(function (a, b)
+        /*values.sort(function (a, b)
         {
             return b.value - a.value;
-        });
-        
-        for (i = 0; i < len; i++)
-        {
-            if (defcut && values[i].value * 360 / total <= 1.5)
-            {
-                cut = i;
-                defcut = false;
-            }
-            
-            if (i > cut) 
-            {
-                defcut = false;
-                values[cut].value += values[i].value;
-                values[cut].others = true;
-                others = values[cut].value;
-            }
-        }
-        
-        len = Math.min(cut + 1, values.length);
-        others && values.splice(len) && (values[cut][0].others = true);
-              
-        for (i = 0; i < len; i++)
-        {
-          for (var j = 0; j < (multi || 1); j++)
-          {
-            var mangle = angle - 360 * values[i].value / total / 2;
-            if (!i)
-            {
-                angle = 90 - mangle;
-                mangle = angle - 360 * values[i].value / total / 2;
-            }
-            
-            if (opts.init)
-            {
-                var ipath = sector(cx, cy, 1, angle, angle - 360 * values[i].value / total).join(",");
-            }
-            //var pathd;  //path object
-            var ir, or; //inner and outer radius
-            
-            //value[x] consists of value itself and level
-            /*if(values[i][1]==0)
-            {
-                pathd = sector(cx, cy, r, angle, angle -= 360 * values[i] / total);
-            }   */
-            
-            //ir = radpart*(values[i][1]);
-            //or = radpart*(values[i][1]+1);
-             
-            ir = 0;
-            or = r;
+        });*/
 
-            //pathd = ringsector(cx, cy, ir, or, angle, angle -= 360 * values[i].value / total);
-                
-            var pathd = {
-                        obj: ringsector(cx, cy, ir, or, angle, angle -= 360 * values[i].value / total),
-                        path: ringsector(cx, cy, ir, or, angle, angle -= 360 * values[i].value / total),
-                        key: multi?values[j][i].key : values[i].key,
-                        attr: {stroke: "none", fill: colors[multi ? j : i]}
-                        };
-    
-            //var p = this.path(opts.init ? ipath : path).attr({fill: opts.colors && opts.colors[i] || this.g.colors[i] || "#666", stroke: opts.stroke || "#fff", "stroke-width": (opts.strokewidth == null ? 1 : opts.strokewidth), "stroke-linejoin": "round"});
-            //var p = this.path(path);
-            //var hihi = this.path(path);
-            //p.attr({fill: opts.colors && opts.colors[i] || this.g.colors[i] || "#666", stroke: opts.stroke || "#fff", "stroke-width": (opts.strokewidth == null ? 1 : opts.strokewidth), "stroke-linejoin": "round"});
-            //p.value = values[i];
-            //p.middle = path.middle;
-            //p.mangle = mangle;
-            if (multi)
-            {
-                sectors[j].push(pathd);
-            }
-            else 
-            {
-                sectors.push(pathd);
-            }
+        
+        var lastangle = 0;   
+        var nextangle = 0;
+        var factor = 360/total;
+        var ir = r/2;
+        var or = r*0.7;
+        var sw = false;
             
-            //sectors.push(pathd);
-            //series.push(pathd);
-            //opts.init && p.animate({path: path.join(",")}, (+opts.init - 1) || 1000, ">");
+        for (i = 0; i < len; i++)
+        {          
+          var lx, ly;
+        
+          if(values[i].length==null)
+          {
+              if(opts.separate)
+              {
+                if(sw)
+                {
+                  ir = r/4;
+                  or = r/2.2;
+                  
+                }
+                else
+                {
+                  ir = r/2;
+                  or = r*0.7;
+                }
+                sw = !sw;
+              }
+              
+              nextangle = lastangle + values[i].value * factor;
+              var pathd = {
+                          obj: ringsector(cx, cy, ir, or, lastangle, nextangle),
+                          path: ringsector(cx, cy, ir, or, lastangle, nextangle),
+                          key: values[i].key,
+                          attr: {stroke: "none", fill: colors[i]},
+                          value: values[i].value,
+                          };    
+             
+             var e = paper.ellipse(cx + r*1.2, cy - r*0.5 + i*20, 8, 8);
+             e.attr(pathd.attr);
+             var t = paper.text(cx + r + 32, cy - r*0.5 + i*20, values[i].label);
+             t.translate(( - t.getBBox().width)/2, 0);
+             sectors.push(pathd);
+             lastangle = nextangle;
+                      
+          }
+          else
+          {
+            for (var j = 0; j < values[i].length; j++)
+            {
+              if(opts.separate)
+              {
+                if(sw)
+                {
+                  ir = r/4;
+                  or = r/2;
+                  
+                }
+                else
+                {
+                  ir = r/2;
+                  or = r*0.8;
+                }
+                sw = !sw;
+              }
+              
+              nextangle = lastangle + values[i][j].value * factor;
+              var pathd = {
+                          obj: ringsector(cx, cy, ir, or, lastangle, nextangle),
+                          path: ringsector(cx, cy, ir, or, lastangle, nextangle),
+                          key: values[i][j].key,
+                          attr: {stroke: "none", fill: colors[j]},
+                          value: values[i][j].value,
+                          };
+                          
+              sectors.push(pathd);
+              lastangle = nextangle;
+              
+              
+              //ir *= 1.03;         
+              //or *= 1.03;
+            } 
           }
         }
-      
-        
-        /*for (i = 0; i < len; i++)
-        {
-            p = paper.path(sectors[i].attr("path")).attr(this.g.shim);
-            opts.href && opts.href[i] && p.attr({href: opts.href[i]});
-            p.attr = function () {};
-            covers.push(p);
-            series.push(p);
-        }     */
     }
+    
+    for(var i = 0; i<len; i++)
+    {
+      
+      //this.g.text(labelposx[i], labelposy[i], "Raphaël");
+    }
+    
 
     chart.hover = function (fin, fout)
     {
@@ -698,4 +394,4 @@ Raphael.fn.g.ringchart_paths = function (x, y, width, height, values, opts)
     chart.covers = covers; 
     chart.elements = chart.sectors;
     return chart;
-};
+};               

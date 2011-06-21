@@ -1,104 +1,181 @@
-<html>
-    <head>
-        <title>Animated Transitions with Javascript</title>
-        <script src="3rdparty/raphael.js"></script>
-        <script src="shapes.js"></script>
-        <script src="3rdparty/g.raphael/g.raphael.js"></script>
-        <script src="g.bar.path.js"></script>
-        <script src="g.pie.path.js"></script>
-        <script src="animate.js"></script>
-        <style type="text/css">
-	         #outercontainer {position:absolute; width:100%; height:100%}
-	         #testcanvas {background-image:url(background.png); position:absolute;
-                        width:650px; height:420px ;top:50%; left:50%;
-                        margin-top:-200px ; margin-left:-325px}
-           #title {position:relative; left:50%; width:650px; margin-left:-325px; height:20px; margin-top:-10px}
-        </style>
-    </head>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>Animated Transitions with Javascript</title>
+
+<script src="3rdparty/raphael.js"></script>
+<script src="shapes.js"></script>
+<script src="3rdparty/g.raphael/g.raphael.js"></script>
+<script src="g.bar.path.js"></script>
+<script src="g.pie.path.js"></script>
+<script src="animate.js"></script>
+<script src="TransitionManager.js"></script>
+<style type="text/css">
+#outercontainer {position:absolute; width:100%; height:100%}
+#testcanvas {background-image:url(graphbackground.png); position:absolute;margin-left:-350px; margin-top:10px;
+width:700px; height:450px; left:50%}
+#topbanner {position:absolute; left:50%; margin-left:-350px; margin-top:-5px; background-image:url(banner.png);
+width:700px; height:44px}
+#controlbanner {position:absolute; left:50%; margin-left:-350px; margin-top:0px; background-image:url(controlbanner.png);
+width:700px; height:162px}
+margin-top:-200px ; margin-left:-325px}
+.top {font-family: arial, verdana, sans-serif; color: #FFFFFF;}
+h1 {font-family: arial, verdana, sans-serif; font-size: 0.8em;}
+</style>
+</head>
+
+<body bgcolor=#F5F6F7>
+<div id="outercontainer">
+  <div id="topbanner">
+    <p>&nbsp</p>
+    <div id="controlbanner">
     
-    <body bgcolor="#eeeeee">
-        <div id="outercontainer">        
-          <div id="testcanvas">            
-          </div>
-          <div id="title">
-            <p><h2>Animated Graph Transitions With Javascript</h2></p>            
-            <div id="controls">
-                <form name="controls">
-                <input type=radio name="punkte" value="erstens" onClick="selectDataset()">
-                Dataset 1: Gender / Ethnicity<br>
-                <input type=radio name="punkte" value="zweitens" onClick="selectDataset()">
-                Dataset 2: iOS Devices / OS Version<br>
-                </form>
-             </div> 
-             <div id="buttons">
-               <form name="buttons">
-                 <input type=button name="Text 2" value="Animate!" onClick="animate()">
-               </form>
-            </div> 
-          </div>      
-        </div>
-    </body>
-    <p>
-    <script type="text/javascript">
-        
-        var data;       
-        raphael = new Raphael("testcanvas", 650, 420);
-        var a;
-        var dsid = 1;
+    <table width=100% height=10px cellpadding="10">
+        <tr>
+          <td width=55%>
+             <h1><b>Dataset</b></h1>
+          </td>
+          <td width=30%>
+              <h1><b>Graph Type</b></h1>
+          </td>
+          <td width=15%>
+             <h1><b>DS Values</b></h1>
+          </td>
+        </tr>
+      </table>
+      <table width=100% height=80px cellpadding="10">
+        <tr>
+          <td width=55%>
+            <form name="controls">
+              <h1><input name="punkte" value="erstens" onclick="selectDataset()" type="radio">
+              w3schools.com Web Browser Stats 2008/2011</h1>
+              <h1><input name="punkte" value="zweitens" onclick="selectDataset()" type="radio">
+              iOS Devices / OS Version</h1>
+            </form>
+          </td>
+          <td width=30%>
+            <form name="controls2">
+              <h1><input name="punkte" value="erstens" onclick="selectGraphType()" type="radio">
+              Bar Chart (stacked)</h1>
+              <h1><input name="punkte" value="zweitens" onclick="selectGraphType()" type="radio">
+              Bar Chart (grouped)</h1>
+              <h1><input name="punkte" value="drittens" onclick="selectGraphType()" type="radio">
+              Pie Chart</h1>
+            </form>
+          </td>
+          <td width=15%>
+            <!-- <form name="buttons"> <input name="Text 2" value="Animate to new values" onclick="animate()" type="button">
+            </form> -->
+            <form name="controls3">
+              <h1><input name="punkte" value="erstens" onclick="selectDataValues()" type="radio">
+              Values 1</h1>
+              <h1><input name="punkte" value="zweitens" onclick="selectDataValues()" type="radio">
+              Values 2</h1>
+            </form>
+          </td>
+        </tr>
+      </table>
+      <div id="testcanvas"> </div>
+    </div>
+  </div>
+</div>
+<p>
+<script type="text/javascript">
+  var data; raphael = new Raphael("testcanvas", 650, 420);
+  var a;
+  var dsid = 0;
+  var manager = new TransitionManager(raphael);
+  
+  /*
+  * animate the graph
+  */ 
+  function animate()
+  {
+    a.set_dataset(dsid);
 
-        /*
-        * animate the graph
-        */        
-        function animate()
-        {
-            a.set_dataset(dsid);
-            a.chart('bar_grouped', [data.levels[1]]);
-            dsid = 1-dsid;
-            //setTimeout(refresh, 2096);
-        }    
-
-        /*
-        * select a dataset from the radio buttons and fill variables
-        */            
-        function selectDataset()
-        {
-          raphael.clear();
-
-          if(document.controls.elements[0].checked)
-          {
-              data = {'levels': ['gender','ethnicity'],
-                     'data':// upper layer: datasets
-                        [
-                            {'male': {'black': 10, 'white': 15, 'asian': 5},
-                             'female': {'black': 5, 'white': 10, 'asian': 2, 'hispanic': 2}
-                            },
-                            {'male': {'black': 16, 'white': 15, 'asian': 5},
-                             'female': {'black': 50, 'white': 10, 'asian': 2, 'hispanic': 2}
-                            }
-                        ]
-              };
-          }
-          else if(document.controls.elements[1].checked)
-          {
-              data = {'levels': ['device','ios-version'],
-                     'data':// upper layer: datasets
-                        [
-                            {'iphone': {'5.x': 2, '4.x': 30, '3.x': 20, '2.x': 2, '1.x': 1},
-                             'ipod touch': {'5.x': 2, '4.x': 20, '3.x': 15, '2.x': 4, '1.x': 2},
-                             'ipad': {'5.x': 3, '4.x': 25, '3.x': 15}
-                            },
-                            {'iphone': {'5.x': 22, '4.x': 10, '3.x': 21, '2.x': 1, '1.x': 1},
-                             'ipod touch': {'5.x': 12, '4.x': 17, '3.x': 10, '2.x': 3, '1.x': 1},
-                             'ipad': {'5.x': 23, '4.x': 15, '3.x': 5}
-                            }
-                        ]
-              }; 
-          }
-
-          a = new AG(data.data, data.levels);
-          dsid = 1;
-          animate(); //show the graph
-        }  
-        </script>
-        </p>
+    //pause(2000);
+    //a.set_dataset(dsid);
+    //if(dsid==0) a.chart('bar_stacked', [data.levels[0], data.levels[1]]);
+    //else a.chart('pie', [data.levels[0]]);
+    //else if(dsid==1) a.chart('bar_grouped', [data.levels[0],data.levels[1]]);
+    //else if(dsid==2)
+    a.chart('pie_separate', [data.levels[0]]);
+    //pause(2000);
+    dsid += 1;
+    a.set_dataset(dsid);
+    setTimeout("a.chart('pie_separate', [data.levels[0]])", 3000);
+    //pause(2000);
+    setTimeout("a.chart('pie', [data.levels[0]])",5000);
+    
+    //setTimeout(refresh, 2096);
+  } 
+  
+  /*
+  * select a dataset from the radio buttons and fill variables
+  */ 
+  function selectDataset()
+  {
+    if(document.controls.elements[0].checked)
+    {
+      data = {'levels': ['Browser'],
+              'data':// upper layer: datasets
+              [
+                {'Internet Explorer': 49.0,
+                'Firefox': 42.6,                       
+                'Chrome': 3.1,
+                'Safari': 2.7,
+                'Opera': 2.0,
+                'Other': 0.6 
+                },
+                {'Internet Explorer': 24.9,
+                'Firefox': 42.4,                       
+                'Chrome': 25.9,
+                'Safari': 4.0,
+                'Opera': 2.4,
+                'Other': 0.4 
+                }
+              ]
+            };
+    }
+    else if(document.controls.elements[1].checked)
+    {
+      data = {'levels': ['device','ios-version'],
+              'data':// upper layer: datasets
+              [
+                {'iphone': {'5.x': 2, '4.x': 30, '3.x': 20, '2.x': 2, '1.x': 1},
+                'ipod touch': {'5.x': 2, '4.x': 20, '3.x': 15, '2.x': 4, '1.x': 2},
+                'ipad': {'5.x': 3, '4.x': 25, '3.x': 15}
+                },
+                {'iphone': {'5.x': 22, '4.x': 10, '3.x': 21, '2.x': 1, '1.x': 1},
+                'ipod touch': {'5.x': 12, '4.x': 17, '3.x': 10, '2.x': 3, '1.x': 1},
+                'ipad': {'5.x': 23, '4.x': 15, '3.x': 5}
+                }
+              ]
+            };
+    }
+    
+    manager.setData(data);    
+   //a = new AG(data.data, data.levels);
+  //dsid = 1;
+  //a.chart('pie', [data.levels[0]]);
+  //animate(); //show the graph
+  } 
+  
+  function selectGraphType()
+  {
+    if(document.controls2.elements[0].checked)
+      manager.setType('bar_grouped');
+    else if(document.controls2.elements[1].checked)
+      manager.setType('bar_stacked');
+    else if(document.controls2.elements[2].checked)
+      manager.setType('bar_pie');
+  } 
+  
+  function selectDataValues()
+  {
+    if(document.controls3.elements[0].checked)
+      manager.setDataValues(0);
+    else if(document.controls3.elements[1].checked)
+      manager.setDataValues(1);
+  }
+</script></p>
+</body>
 </html>
