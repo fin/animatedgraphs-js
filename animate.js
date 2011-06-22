@@ -1,5 +1,5 @@
 /**
- * <pAnimatedGraphs:</p>
+ * <p>AnimatedGraphs:</p>
  *
  * <p>graphs & animations between them.</p>
  * <p>wraps raphael.js</p>

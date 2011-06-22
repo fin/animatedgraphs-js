@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="utf-8"></meta>
 		<meta name="generator" content="JsDoc Toolkit"></meta>
-		<title>AG | AnimatedGraphs</title>
+		<title>TransitionManager | AnimatedGraphs</title>
 
 		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;"></meta>
 		<meta name="mobileoptimized" content="0"></meta>
@@ -57,7 +57,7 @@
 	<div class="innerContent">
 		<h1 class="classTitle">
 			
-			Class <span>AG</span>
+			Class <span>TransitionManager</span>
 		</h1>
 		
 		<div class="intro">
@@ -70,7 +70,7 @@
 					
 					
 					
-						<li>Defined in: <a href="../symbols/src/animate.js.html">animate.js</a></li>
+						<li>Defined in: <a href="../symbols/src/TransitionManager.js.html">TransitionManager.js</a></li>
 					
 						
 				</ul>
@@ -79,7 +79,7 @@
 		
 		
 			<div class="props">
-				<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class AG.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class TransitionManager.">
 					<caption class="sectionTitle">Class Summary</caption>
 					<thead>
 						<tr>
@@ -92,11 +92,9 @@
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription" >
 								<div class="fixedFont">
-									<b><a href="../symbols/AG.html#constructor">AG</a></b>(datasets, labels)
+									<b><a href="../symbols/TransitionManager.html#constructor">TransitionManager</a></b>()
 								</div>
-								<div class="description"><p>AnimatedGraphs:</p>
-
-<p>graphs & animations between them.</div>
+								<div class="description">Transition Manager</div>
 							</td>
 						</tr>
 					</tbody>
@@ -115,7 +113,7 @@
 				<h2 class="sectionTitle">Method Summary</h2>
 				
 				
-					<table class="summaryTable" id="MethodsList" cellspacing="0" summary="A summary of the methods documented in the class AG.">
+					<table class="summaryTable" id="MethodsList" cellspacing="0" summary="A summary of the methods documented in the class TransitionManager.">
 						<thead>
 							<tr>
 								<th scope="col">Method Attributes</th>
@@ -131,9 +129,9 @@
 								>
 									<td class="attributes">&nbsp;</td>
 									<td class="nameDescription">
-										<div class="fixedFont"><b><a href="../symbols/AG.html#self.chart">self.chart</a></b>(chart_type, labels)
+										<div class="fixedFont"><b><a href="../symbols/TransitionManager.html#self.draw">self.draw</a></b>(type)
 										</div>
-										<div class="description">The workhorse.</div>
+										<div class="description">Draw with different parameters</div>
 									</td>
 								</tr>
 							
@@ -142,20 +140,42 @@
 								>
 									<td class="attributes">&nbsp;</td>
 									<td class="nameDescription">
-										<div class="fixedFont"><b><a href="../symbols/AG.html#self.set_dataset">self.set_dataset</a></b>(id)
+										<div class="fixedFont"><b><a href="../symbols/TransitionManager.html#self.redraw">self.redraw</a></b>()
 										</div>
-										<div class="description">switch dataset to index.</div>
+										<div class="description">Draw with global parameters</div>
 									</td>
 								</tr>
 							
 								<tr
 									 class='item2'
 								>
-									<td class="attributes">&lt;inner&gt; &nbsp;</td>
+									<td class="attributes">&nbsp;</td>
 									<td class="nameDescription">
-										<div class="fixedFont"><b><a href="../symbols/AG.html#-TransitionManager">TransitionManager</a></b>(raphael)
+										<div class="fixedFont"><b><a href="../symbols/TransitionManager.html#self.setData">self.setData</a></b>(data)
 										</div>
-										<div class="description"></div>
+										<div class="description">Set graph data</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item3'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/TransitionManager.html#self.setDataValues">self.setDataValues</a></b>(id)
+										</div>
+										<div class="description">Change the value set in the dataset</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item4'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/TransitionManager.html#self.setType">self.setType</a></b>(t)
+										</div>
+										<div class="description">Set graph type</div>
 									</td>
 								</tr>
 							
@@ -182,40 +202,16 @@
 					</h2>
 					
 					<div class="fixedFont">
-						<b>AG</b>(datasets, labels)
+						<b>TransitionManager</b>()
 					</div>
 					
 					<div class="description">
-						<p>AnimatedGraphs:</p>
-
-<p>graphs & animations between them.</p>
-<p>wraps raphael.js</p>
-
-
-<pre>datasets = array of objects, e.g. [{male: {asian: 1, african: 2}, female: {asian: 3, african: 2}}]</pre>
-<pre>labels = labels for objects, e.g. ['gender', 'ethnicity']</pre>
+						Transition Manager
 						
 					</div>
 					
 					
 				
-					
-						<dl class="detailList params">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{[{…key:value…}]}</span>  <b>datasets</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<span class="light fixedFont">{[String]}</span>  <b>labels</b>
-									
-								</dt>
-								<dd></dd>
-							
-						</dl>
 					
 					
 					
@@ -242,18 +238,18 @@
 							<li 
 								 class='item0'
 							>
-								<div class="fixedFont heading" id="self.chart">
+								<div class="fixedFont heading" id="self.draw">
 									<span class='lighter'>
 									
 									</span>
 									
-									<span class="light">{void}</span>
 									
-									<b>self.chart</b>(chart_type, labels)
+									
+									<b>self.draw</b>(type)
 								</div>
 								
 								<div class="description">
-									The workhorse. Draw (with animation from a current chart, if valid) a chart using the current dataset
+									Draw with different parameters
 									
 									
 									
@@ -267,13 +263,7 @@
 										<dt class="heading">Parameters:</dt>
 										
 											<dt>
-												<span class="light fixedFont">{String}</span> <b>chart_type</b>
-												
-											</dt>
-											<dd></dd>
-										
-											<dt>
-												<span class="light fixedFont">{[String]}</span> <b>labels</b>
+												<span class="light fixedFont">{string}</span> <b>type</b>
 												
 											</dt>
 											<dd></dd>
@@ -288,18 +278,87 @@
 							<li 
 								 class='item1'
 							>
-								<div class="fixedFont heading" id="self.set_dataset">
+								<div class="fixedFont heading" id="self.redraw">
 									<span class='lighter'>
 									
 									</span>
 									
-									<span class="light">{void}</span>
 									
-									<b>self.set_dataset</b>(id)
+									
+									<b>self.redraw</b>()
 								</div>
 								
 								<div class="description">
-									switch dataset to index. need to call .chart() to take effect!
+									Draw with global parameters
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item2'
+							>
+								<div class="fixedFont heading" id="self.setData">
+									<span class='lighter'>
+									
+									</span>
+									
+									
+									
+									<b>self.setData</b>(data)
+								</div>
+								
+								<div class="description">
+									Set graph data
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont">{<a href="../symbols/AG.html">AG</a> data format}</span> <b>data</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item3'
+							>
+								<div class="fixedFont heading" id="self.setDataValues">
+									<span class='lighter'>
+									
+									</span>
+									
+									
+									
+									<b>self.setDataValues</b>(id)
+								</div>
+								
+								<div class="description">
+									Change the value set in the dataset
 									
 									
 									
@@ -326,24 +385,21 @@
 							</li>
 						
 							<li 
-								 class='item2'
+								 class='item4'
 							>
-								<div class="fixedFont heading" id="-TransitionManager">
+								<div class="fixedFont heading" id="self.setType">
 									<span class='lighter'>
-									&lt;inner&gt; 
+									
 									</span>
 									
 									
 									
-									<b>TransitionManager</b>(raphael)
+									<b>self.setType</b>(t)
 								</div>
 								
 								<div class="description">
+									Set graph type
 									
-									
-									
-										<br />
-										<i>Defined in: </i> <a href="../symbols/src/TransitionManager.js.html">TransitionManager.js</a>.
 									
 									
 									
@@ -356,7 +412,7 @@
 										<dt class="heading">Parameters:</dt>
 										
 											<dt>
-												<b>raphael</b>
+												<span class="light fixedFont">{string}</span> <b>t</b>
 												
 											</dt>
 											<dd></dd>

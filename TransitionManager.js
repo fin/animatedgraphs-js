@@ -1,5 +1,8 @@
-// Transition Manager
-
+/** Transition Manager
+ *
+ * @name TransitionManager
+ * @class
+ */
 function TransitionManager(raphael)
 {
   var self = this;
@@ -13,8 +16,10 @@ function TransitionManager(raphael)
 
   /**
   * Draw with different parameters
+  *
+  * @memberOf TransitionManager#
   */ 
-  self.draw = function(type)
+  self.draw = function(/** string */ type)
   {
       if(self.dlength==1) a.chart(type, [self.data.levels[0]]);
       else if(self.dlength==2) a.chart(type, [self.data.levels[0], self.data.levels[1]]);
@@ -22,6 +27,8 @@ function TransitionManager(raphael)
   
   /**
   * Draw with global parameters
+  *
+  * @memberOf TransitionManager#
   */  
   self.redraw = function()
   {
@@ -31,8 +38,10 @@ function TransitionManager(raphael)
   
    /**
   * Set graph type
+  *
+  * @memberOf TransitionManager#
   */
-  self.setType = function(t)
+  self.setType = function(/** string */ t)
   {
     self.type = t;
     self.redraw();
@@ -40,8 +49,10 @@ function TransitionManager(raphael)
   
   /**
   * Set graph data
+  *
+  * @memberOf TransitionManager#
   */  
-  self.setData = function(data)
+  self.setData = function(/** AG data format */ data)
   {
      self.data = data;    
      a = new AG(data.data, data.levels);
@@ -55,8 +66,10 @@ function TransitionManager(raphael)
   
   /**
   *  Change the value set in the dataset
+  *
+  * @memberOf TransitionManager#
   */   
-  self.setDataValues = function(id)
+  self.setDataValues = function(/** int */ id)
   {
       self.dsid = id;
       if(self.type=='pie')
