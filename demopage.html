@@ -46,9 +46,9 @@ h1 {font-family: arial, verdana, sans-serif; font-size: 0.8em;}
           <td width=55%>
             <form name="controls">
               <h1><input name="punkte" value="erstens" onclick="selectDataset()" type="radio">
-              w3schools.com Web Browser Stats 2008/2011</h1>
+              w3schools.com Web Browser Stats 2008 / 2011</h1>
               <h1><input name="punkte" value="zweitens" onclick="selectDataset()" type="radio">
-              iOS Devices / OS Version</h1>
+              New Students at TU Wien 2009SS / 2011SS</h1>
             </form>
           </td>
           <td width=30%>
@@ -79,34 +79,12 @@ h1 {font-family: arial, verdana, sans-serif; font-size: 0.8em;}
 </div>
 <p>
 <script type="text/javascript">
-  var data; raphael = new Raphael("testcanvas", 650, 420);
+  var data; 
+  var raphael = new Raphael("testcanvas", 650, 420);
   var a;
   var dsid = 0;
   var manager = new TransitionManager(raphael);
   
-  /*
-  * animate the graph
-  */ 
-  function animate()
-  {
-    a.set_dataset(dsid);
-
-    //pause(2000);
-    //a.set_dataset(dsid);
-    //if(dsid==0) a.chart('bar_stacked', [data.levels[0], data.levels[1]]);
-    //else a.chart('pie', [data.levels[0]]);
-    //else if(dsid==1) a.chart('bar_grouped', [data.levels[0],data.levels[1]]);
-    //else if(dsid==2)
-    a.chart('pie_separate', [data.levels[0]]);
-    //pause(2000);
-    dsid += 1;
-    a.set_dataset(dsid);
-    setTimeout("a.chart('pie_separate', [data.levels[0]])", 3000);
-    //pause(2000);
-    setTimeout("a.chart('pie', [data.levels[0]])",5000);
-    
-    //setTimeout(refresh, 2096);
-  } 
   
   /*
   * select a dataset from the radio buttons and fill variables
@@ -137,36 +115,43 @@ h1 {font-family: arial, verdana, sans-serif; font-size: 0.8em;}
     }
     else if(document.controls.elements[1].checked)
     {
-      data = {'levels': ['device','ios-version'],
+            data = {'levels': ['Gender','Study Type'],
               'data':// upper layer: datasets
               [
-                {'iphone': {'5.x': 2, '4.x': 30, '3.x': 20, '2.x': 2, '1.x': 1},
-                'ipod touch': {'5.x': 2, '4.x': 20, '3.x': 15, '2.x': 4, '1.x': 2},
-                'ipad': {'5.x': 3, '4.x': 25, '3.x': 15}
+                {'male': {'Bachelor': 10.48, 'Master': 5.79, 'PhD': 10.18, 'Other': 3.32},
+                 'female': {'Bachelor': 3.29, 'Master': 1.96, 'PhD': 2.98, 'Other': 1.12}
                 },
-                {'iphone': {'5.x': 22, '4.x': 10, '3.x': 21, '2.x': 1, '1.x': 1},
-                'ipod touch': {'5.x': 12, '4.x': 17, '3.x': 10, '2.x': 3, '1.x': 1},
-                'ipad': {'5.x': 23, '4.x': 15, '3.x': 5}
-                }
+                {'male': {'Bachelor': 9.32, 'Master': 5.86, 'PhD': 2.04, 'Other': 3.46},
+                 'female': {'Bachelor': 3.19, 'Master': 2.29, 'PhD': 0.83, 'Other': 1.07}
+                }               
               ]
             };
+            
+            
+           /* data = {'levels': ['gender','ethnicity'],
+                    'data':// upper layer: datasets
+                        [
+                            {'male': {'black': 1048, 'white': 579, 'asian': 5},
+                             'female': {'black': 5, 'white': 10, 'asian': 2, 'hispanic': 2}
+                            },
+                            {'male': {'black': 16, 'white': 15, 'asian': 5},
+                             'female': {'black': 20, 'white': 5, 'asian': 7, 'hispanic': 1}
+                            }
+                        ]
+            };*/
     }
     
     manager.setData(data);    
-   //a = new AG(data.data, data.levels);
-  //dsid = 1;
-  //a.chart('pie', [data.levels[0]]);
-  //animate(); //show the graph
   } 
   
   function selectGraphType()
   {
     if(document.controls2.elements[0].checked)
-      manager.setType('bar_grouped');
-    else if(document.controls2.elements[1].checked)
       manager.setType('bar_stacked');
+    else if(document.controls2.elements[1].checked)
+      manager.setType('bar_grouped');
     else if(document.controls2.elements[2].checked)
-      manager.setType('bar_pie');
+      manager.setType('pie');
   } 
   
   function selectDataValues()

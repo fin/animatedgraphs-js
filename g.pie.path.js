@@ -34,6 +34,36 @@ Raphael.fn.g.ringchart_paths = function (x, y, width, height, values, opts)
         labelposy = [];
    chart.covers = covers;   
     
+    //setup colors
+    colors = new Array(6);
+    for(var i = 0; i<6; i++)
+    {
+      colors[i] = new Array(5);
+    }
+    
+    colors[0][0] = "#1751A7";
+    colors[0][1] = "#2B65BB";
+    colors[0][2] = "#3F79CF";
+    colors[0][3] = "#538DE3";
+    colors[0][4] = "#67A1F7";
+    
+    colors[1][0] = "#8AA717";
+    colors[1][1] = "#9EBB2B";
+    colors[1][2] = "#B2CF3F";
+    colors[1][3] = "#C6E353";
+    colors[1][4] = "#DAF767";
+    
+    colors[2][0] = "#A74217";
+    colors[2][1] = "#BB562B";
+    colors[2][2] = "#CF6A3F";
+    colors[2][3] = "#E37E53";
+    colors[2][4] = "#F79267";
+    
+    colors[3][0] = "#A78A17";
+ 
+    colors[4][0] = "#3F0787";
+ 
+    colors[5][0] = "#A71717";
   
     if (len == 1)
     {
@@ -160,6 +190,7 @@ Raphael.fn.g.ringchart_paths = function (x, y, width, height, values, opts)
         var ir = r/2;
         var or = r*0.7;
         var sw = false;
+        var step = 0;
             
         for (i = 0; i < len; i++)
         {          
@@ -188,13 +219,14 @@ Raphael.fn.g.ringchart_paths = function (x, y, width, height, values, opts)
                           obj: ringsector(cx, cy, ir, or, lastangle, nextangle),
                           path: ringsector(cx, cy, ir, or, lastangle, nextangle),
                           key: values[i].key,
-                          attr: {stroke: "none", fill: colors[i]},
+                          attr: {stroke: "none", fill: colors[i][0]},
                           value: values[i].value,
                           };    
              
-             var e = paper.ellipse(cx + r*1.2, cy - r*0.5 + i*20, 8, 8);
+             var e = paper.ellipse(cx + r*1.2, cy - r*0.5 + step, 8, 8);
              e.attr(pathd.attr);
-             var t = paper.text(cx + r + 32, cy - r*0.5 + i*20, values[i].label);
+             var t = paper.text(cx + r + 32, cy - r*0.5 + step, values[i].label);
+             step += 20;
              t.translate(( - t.getBBox().width)/2, 0);
              sectors.push(pathd);
              lastangle = nextangle;
@@ -209,13 +241,13 @@ Raphael.fn.g.ringchart_paths = function (x, y, width, height, values, opts)
                 if(sw)
                 {
                   ir = r/4;
-                  or = r/2;
+                  or = r/2.2;
                   
                 }
                 else
                 {
                   ir = r/2;
-                  or = r*0.8;
+                  or = r*0.7;
                 }
                 sw = !sw;
               }
@@ -225,10 +257,15 @@ Raphael.fn.g.ringchart_paths = function (x, y, width, height, values, opts)
                           obj: ringsector(cx, cy, ir, or, lastangle, nextangle),
                           path: ringsector(cx, cy, ir, or, lastangle, nextangle),
                           key: values[i][j].key,
-                          attr: {stroke: "none", fill: colors[j]},
+                          attr: {stroke: "none", fill: colors[i][j]},
                           value: values[i][j].value,
                           };
-                          
+              
+              var e = paper.ellipse(cx + r*1.2, cy - r*0.5 + step, 8, 8);
+              e.attr(pathd.attr);
+              var t = paper.text(cx + r + 32, cy - r*0.5 + step, values[i][j].label);
+              step +=20;
+              t.translate(( - t.getBBox().width)/2, 0);            
               sectors.push(pathd);
               lastangle = nextangle;
               

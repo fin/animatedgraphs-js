@@ -55,6 +55,7 @@ Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
     !opts.stacked && (barwidth /= multi || 1);
     for (var i = 0; i < len; i++) {
         stack = [];
+        var heightuptonow = 0;
         for (var j = 0; j < (multi || 1); j++) {
             if(multi && values[j].length<=i)
                 continue;
@@ -62,7 +63,7 @@ Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
                 top = y + height - barvgutter - h,
                 bar = {
                         obj: raphael.rectpath(Math.round(X + barwidth / 2), top + h/2, barwidth, h),
-                        path: raphael.rectpath(Math.round(X + barwidth / 2), top + h/2, barwidth, h),
+                        path: raphael.rectpath(Math.round(X + barwidth / 2), top + h/2 - heightuptonow, barwidth, h),
                         key: multi?values[j][i].key : values[i].key,
                         attr: {stroke: "none", fill: colors[multi ? j : i]},
                         value: multi ? values[j][i].value : values[i].value,
@@ -83,6 +84,7 @@ Raphael.fn.g.barchart_paths = function (x, y, width, height, values, opts) {
             } else {
                 stack.push(bar);
             }
+            heightuptonow += opts.stacked?h:0;
         }
         if (opts.stacked) {
             var cvr;
