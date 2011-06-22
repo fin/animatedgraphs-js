@@ -45,8 +45,11 @@ function TransitionManager(raphael)
   {
      self.data = data;    
      a = new AG(data.data, data.levels);
+     self.dsid = 0;
      a.set_dataset(self.dsid);
      self.dlength = data.levels.length;
+     
+     
      self.redraw();
   }
   
