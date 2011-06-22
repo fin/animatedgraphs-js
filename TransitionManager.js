@@ -11,7 +11,7 @@ function TransitionManager(raphael)
   self.dlength = 1; //data levels count
   var a;
 
-  /*
+  /**
   * Draw with different parameters
   */ 
   self.draw = function(type)
@@ -20,7 +20,7 @@ function TransitionManager(raphael)
       else if(self.dlength==2) a.chart(type, [self.data.levels[0], self.data.levels[1]]);
   }
   
-  /*
+  /**
   * Draw with global parameters
   */  
   self.redraw = function()
@@ -29,7 +29,7 @@ function TransitionManager(raphael)
       else if(self.dlength==2) a.chart(self.type, [self.data.levels[0], self.data.levels[1]]);
   }
   
-   /*
+   /**
   * Set graph type
   */
   self.setType = function(t)
@@ -38,7 +38,7 @@ function TransitionManager(raphael)
     self.redraw();
   }
   
-  /*
+  /**
   * Set graph data
   */  
   self.setData = function(data)
@@ -53,7 +53,7 @@ function TransitionManager(raphael)
      self.redraw();
   }
   
-  /*
+  /**
   *  Change the value set in the dataset
   */   
   self.setDataValues = function(id)
